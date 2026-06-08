@@ -1,0 +1,29 @@
+UDI
+Product ID
+Type
+Air temperature [K]
+Process temperature [K]
+Rotational speed [rpm]
+Torque [Nm]
+Tool wear [min]
+Machine failure
+TWF
+HDF
+PWF
+OSF
+RNF
+Air temperature [K]_roll_mean
+Air temperature [K]_roll_std
+Air temperature [K]_roll_var
+Process temperature [K]_roll_mean
+Process temperature [K]_roll_std
+Process temperature [K]_roll_var
+Rotational speed [rpm]_roll_mean
+Rotational speed [rpm]_roll_std
+Rotational speed [rpm]_roll_var
+Torque [Nm]_roll_mean
+Torque [Nm]_roll_std
+Torque [Nm]_roll_var
+Tool wear [min]_roll_mean
+Tool wear [min]_roll_std
+Tool wear [min]_roll_var
