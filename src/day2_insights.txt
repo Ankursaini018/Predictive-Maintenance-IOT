@@ -1,0 +1,15 @@
+
+## Week 1 - Day 2 Findings
+
+### Dataset Shape: (9991, 29)
+### Failure Rate: 3.39%
+
+### Key Observations:
+- Tool Wear and Torque show strong relation with failure
+- Rolling Std spikes visible before failure events
+- Failure types: TWF, HDF, PWF, OSF, RNF identified
+
+### Features engineered so far:
+- Rolling Mean (window=10)
+- Rolling Std (window=10)
+- Rolling Var (window=10)

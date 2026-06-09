@@ -225,3 +225,6 @@ models/
 *.h5
 *.pkl
 .ipynb_checkpoints/
+
+!data/.gitkeep
+!models/.gitkeep
