@@ -1,0 +1,6 @@
+Week 1 Final Dataset Summary
+============================
+Shape: (9982, 37)
+Features: 36
+Failure Rate: 3.40%
+Imbalance Ratio: 28.4:1
