@@ -1,31 +1,31 @@
+WEEK 1 — DAY 6 SUMMARY
+======================
 
-WEEK 1 - EDA SUMMARY
-====================
+Completed Tasks:
+----------------
+1. Created EDA summary notebook
+2. Added reusable visualization utilities
+3. Added model validation module
+4. Improved project documentation
+5. Added testing support
 
-Dataset Shape: (9991, 51)
+Files Added:
+------------
+- src/visualizations.py
+- src/model_validator.py
+- src/test_preprocessing.py
+- README.md updates
 
-Total Features: 50
+Key Achievements:
+-----------------
+✔ Reusable plotting functions
+✔ Cross-validation utilities
+✔ Model evaluation helpers
+✔ Unit testing support
+✔ Better project structure
 
-Failure Rate:
-3.39%
-
-Top 10 Correlated Features with Failure:
-
-Torque [Nm]_outlier_flag: 0.2562
-torque_per_rpm: 0.2065
-total_anomaly_score: 0.1941
-Torque [Nm]: 0.1914
-power: 0.1761
-power_roc_abs: 0.1441
-Torque [Nm]_roc_abs: 0.1429
-Torque [Nm]_roc: 0.1321
-tool_wear_rate: 0.1301
-power_roc: 0.1199
-
-Key Findings:
--------------
-1. Torque-based features dominate failure prediction.
-2. Engineered features outperform raw sensor signals.
-3. Anomaly-based indicators are highly predictive.
-4. Severe class imbalance exists (~28:1).
-5. Week 1 feature engineering successfully completed.
+Project Status:
+---------------
+Week 1 Progress: 6/7 Days Completed
+Current Stage: Final Week 1 polishing
+Next Stage: Day 7 completion
