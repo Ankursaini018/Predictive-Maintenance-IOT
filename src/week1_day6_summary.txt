@@ -1,0 +1,31 @@
+
+WEEK 1 - EDA SUMMARY
+====================
+
+Dataset Shape: (9991, 51)
+
+Total Features: 50
+
+Failure Rate:
+3.39%
+
+Top 10 Correlated Features with Failure:
+
+Torque [Nm]_outlier_flag: 0.2562
+torque_per_rpm: 0.2065
+total_anomaly_score: 0.1941
+Torque [Nm]: 0.1914
+power: 0.1761
+power_roc_abs: 0.1441
+Torque [Nm]_roc_abs: 0.1429
+Torque [Nm]_roc: 0.1321
+tool_wear_rate: 0.1301
+power_roc: 0.1199
+
+Key Findings:
+-------------
+1. Torque-based features dominate failure prediction.
+2. Engineered features outperform raw sensor signals.
+3. Anomaly-based indicators are highly predictive.
+4. Severe class imbalance exists (~28:1).
+5. Week 1 feature engineering successfully completed.
