@@ -1,158 +1,48 @@
-# 🚀 Predictive-Maintenance-IOT
+## Week 1 — IoT Telemetry Ingestion & Signal Processing ✅ COMPLETE
 
-Contextual Predictive Maintenance using IoT and Machine Learning
+### What We Built
 
----
-
-## 📌 Project Overview
-
-This project focuses on predicting machine failures using **industrial IoT sensor data** and **machine learning**.
-
-The goal is to detect machine failures **before breakdown happens** by analyzing:
-
-- Sensor signals
-- Failure patterns
-- Statistical features
-- Signal trends
-- Context-aware engineered features
-
-Dataset used:
-
-**AI4I 2020 Predictive Maintenance Dataset**
+| Category | Features | Count |
+|---|---|---|
+| Raw Sensor | Temperature, RPM, Torque, Tool Wear | 5 |
+| Rolling | Mean, Std, Variance (window=10) | 15 |
+| Domain | Power, Temp Delta, Wear Rate | 6 |
+| Lag | Lag1, Lag2, Lag3 for key sensors | 12 |
+| Rate of Change | ROC, Absolute ROC | 6 |
+| Outlier Flags | Z-score flags + anomaly score | 6 |
+| **TOTAL** | | **50+** |
 
 ---
 
-## 🎯 Objectives
+### Notebooks
 
-- Predict machine failures
-- Engineer useful predictive features
-- Analyze sensor behavior
-- Handle class imbalance
-- Build robust ML models
-- Optimize predictive performance
-
----
-
-## 📁 Project Structure
-
-```txt
-Predictive-Maintenance-IOT/
-│── data/
-│── models/
-│── notebooks/
-│── src/
-│── README.md
-│── requirements.txt
-```
-
----
-
-## 📊 Week 1 Progress
-
-### ✅ Day 1
-- Dataset loading
-- Dataset inspection
-- Basic EDA
-- Missing value analysis
-
-### ✅ Day 2
-- Signal analysis
-- Failure type breakdown
-- Correlation heatmap
-- Rolling anomaly analysis
-
-### ✅ Day 3
-- Feature engineering
-- Power feature
-- Temperature delta
-- Tool wear rate
-
-### ✅ Day 4
-- Advanced signal processing
-- Lag features
-- Rate-of-change features
-- Outlier analysis
-
-### ✅ Day 5
-- Refactoring preprocessing pipeline
-- Constants
-- Modular functions
-- Unit testing
-
-### ✅ Day 6
-- EDA summary notebook
-- Visualization utilities
-- Model validation module
-- Project documentation
-
-### 🔄 Day 7 (Upcoming)
-- Final Week 1 polishing
-- Repository cleanup
-- Final documentation
-- Week 1 completion
-
----
-
-## 📊 Generated Visual Outputs
-
-| Chart | Description |
+| Notebook | Focus |
 |---|---|
-| failure_types.png | Failure type distribution |
-| correlation_heatmap.png | Feature correlation matrix |
-| sensor_distributions.png | Sensor distribution comparison |
-| anomaly_signals.png | Signal anomaly visualization |
-| engineered_features_dist.png | Engineered features distribution |
-| feature_correlation_target.png | Top correlated features |
-| class_imbalance.png | Class imbalance visualization |
-| day4_feature_importance.png | Feature importance |
-| day4_outliers.png | Outlier analysis |
+| `week1_eda_signal_processing.ipynb` | Dataset ingestion + rolling features |
+| `week1_day2_signal_analysis.ipynb` | Signal analysis + failure breakdown |
+| `week1_day3_feature_engineering.ipynb` | Domain features |
+| `week1_day4_final_signal_processing.ipynb` | Lag + ROC + outlier features |
+| `week1_day6_eda_summary.ipynb` | EDA summary |
+| `week1_day7_final_summary.ipynb` | Week 1 final wrap up |
 
 ---
 
-## 🧪 Testing
+### Source Scripts
 
-Run preprocessing tests:
-
-```bash
-cd src
-python test_preprocessing.py
-```
-
-Run model validator:
-
-```bash
-cd src
-python model_validator.py
-```
-
----
-
-## 📁 Source Files
-
-| File | Purpose |
+| Script | Purpose |
 |---|---|
-| `src/preprocessing.py` | Feature engineering pipeline |
-| `src/visualizations.py` | Reusable plotting utilities |
-| `src/model_validator.py` | Model validation utilities |
-| `src/test_preprocessing.py` | Unit tests |
+| `preprocessing.py` | Full feature engineering pipeline |
+| `visualizations.py` | Reusable plotting functions |
+| `data_validator.py` | Dataset quality checks |
+| `test_preprocessing.py` | Unit tests |
+| `model_validator.py` | Model evaluation utilities |
 
 ---
 
-## 🛠️ Tech Stack
+## Week 2 — Contextual Data Fusion 🔄 IN PROGRESS
 
-- Python
-- Pandas
-- NumPy
-- Matplotlib
-- Seaborn
-- Scikit-learn
-- Jupyter Notebook
-
----
-
-## 📈 Current Status
-
-🟢 Week 1 in progress  
-🟢 Day 6 completed  
-🔄 Day 7 remaining  
-🚀 Week 2 model training coming soon
+### Planned Tasks
+- Simulate external weather and load context data
+- Merge IoT sensor data with external signals
+- Conduct ablation study
+- Build final enriched feature pipeline
