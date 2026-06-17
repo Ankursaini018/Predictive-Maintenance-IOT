@@ -26,13 +26,13 @@ from preprocessing import (
     load_and_preprocess
 )
 
-from weather_simulator import (
+from external_data.weather_simulator import (
     generate_timestamps,
     simulate_weather,
     encode_weather
 )
 
-from load_simulator import (
+from external_data.load_simulator import (
     simulate_factory_load,
     categorize_load
 )

@@ -100,6 +100,41 @@ def plot_top_correlated_features(df, target_col="Machine failure", top_n=15):
     plt.tight_layout()
     plt.show()
 
+def plot_sensor_boxplots(df, sensor_cols, save_path=None):
+    """
+    Plot sensor boxplots.
 
+    Args:
+        df (pd.DataFrame): Dataset
+        sensor_cols (list): Sensor columns
+        save_path (str): Optional save path
+    """
+
+    plt.figure(figsize=(14, 8))
+
+    melted_df = df[sensor_cols].melt(
+        var_name="Sensor",
+        value_name="Value"
+    )
+
+    sns.boxplot(
+        data=melted_df,
+        x="Sensor",
+        y="Value"
+    )
+
+    plt.title(
+        "Sensor Distribution Boxplots",
+        fontsize=13,
+        fontweight="bold"
+    )
+
+    plt.xticks(rotation=20)
+    plt.tight_layout()
+
+    if save_path:
+        plt.savefig(save_path)
+
+    plt.show()
 if __name__ == "__main__":
     print("✅ Visualization module ready!")
