@@ -1,0 +1,59 @@
+WEEK 2 DAY 2 CONTEXT ANALYSIS REPORT
+====================================
+
+PROJECT:
+Contextual Predictive Maintenance
+(IoT + External Context Fusion)
+
+EXTERNAL FEATURES ANALYZED:
+===========================
+1. ambient_temp_c
+2. humidity_pct
+3. wind_speed_kmh
+4. air_pressure_hpa
+5. weather_encoded
+6. factory_load
+7. load_encoded
+
+ANALYSIS COMPLETED:
+===================
+✓ Weather impact analysis
+✓ Shift impact analysis
+✓ Weekday vs Weekend analysis
+✓ Factory load analysis
+✓ External feature correlation study
+✓ Context-aware fusion validation
+
+GENERATED VISUALIZATIONS:
+=========================
+✓ failure_by_weather.png
+✓ failure_by_shift.png
+✓ context_scatter_analysis.png
+✓ weekday_vs_weekend_failure.png
+✓ shift_sensor_analysis.png
+✓ external_feature_importance.png
+
+CURRENT DATASET:
+================
+Base IoT Features      : 50
+External Features      : 7
+Total Features         : 57
+
+Dataset Rows           : 9991
+Failure Rate           : 3.39%
+
+STATUS:
+========
+Week 2 Day 2 Complete
+
+NEXT:
+=====
+Week 2 Day 3
+Ablation Study
+
+Goal:
+Measure model performance with:
+- IoT only
+- IoT + Weather
+- IoT + Factory Load
+- Full Context Fusion
