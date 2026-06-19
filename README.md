@@ -102,13 +102,32 @@ The IoT telemetry dataset was enriched with simulated external contextual signal
 | Dataset Rows      | 9,991 |
 | Failure Rate      | 3.39% |
 
-### Upcoming Work
 
-Week 2 Day 3 — Ablation Study
 
-Models will be compared using:
+## Week 2 Day 3 — Ablation Study ✅
 
-1. IoT Only
-2. IoT + Weather
-3. IoT + Factory Load
-4. Full Context Fusion
+### Experiments
+
+* IoT Only
+* IoT + Weather
+* IoT + Load
+* Full Context Fusion
+
+### Evaluation
+
+Random Forest classifier was used to compare feature groups.
+
+### Findings
+
+* Contextual features improved Macro F1 score.
+* Full Context Fusion achieved the best performance.
+* External information contributes meaningful predictive value.
+
+### Deliverables
+
+* ablation_study.py
+* week2_day3_ablation_study.ipynb
+* ablation_results.csv
+* ablation_f1_comparison.png
+* ablation_report.txt
+
