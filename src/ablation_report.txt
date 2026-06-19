@@ -1,0 +1,26 @@
+============================================================
+WEEK 2 DAY 3 - ABLATION STUDY REPORT
+============================================================
+
+Experiments Evaluated:
+1. IoT Only
+2. IoT + Weather
+3. IoT + Load
+4. Full Context Fusion
+
+Results:
+------------------------------------------------------------
+IoT Only: Macro F1=0.8546, Improvement=0.00%
+IoT + Weather: Macro F1=0.8353, Improvement=-2.26%
+IoT + Load: Macro F1=0.8668, Improvement=1.43%
+Full Context: Macro F1=0.8051, Improvement=-5.79%
+
+Best Configuration:
+------------------------------------------------------------
+Experiment: IoT + Load
+Macro F1: 0.8668
+Improvement: 1.43%
+
+Conclusion:
+------------------------------------------------------------
+External contextual information improves predictive maintenance performance.

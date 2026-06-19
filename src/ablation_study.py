@@ -42,16 +42,25 @@ def create_feature_sets():
     print("CREATING FEATURE SETS")
     print("=" * 50)
 
+    csv_path = os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__),
+            '..',
+            'data',
+            'ai4i2020.csv'
+        )
+    )
+
     # IoT Only
     X_iot, y, feature_names, _ = (
         load_and_preprocess(
-            'data/ai4i2020.csv'
+            csv_path
         )
     )
 
     # Full Fusion
     fused_df = create_fused_dataset(
-        'data/ai4i2020.csv'
+        csv_path
     )
 
     X_full, y_full, full_features = (
@@ -128,54 +137,49 @@ def evaluate_experiment(
     name
 ):
 
-    skf = StratifiedKFold(
-        n_splits=5,
-        shuffle=True,
-        random_state=42
-    )
+    from sklearn.model_selection import train_test_split
 
-    model = (
-        RandomForestClassifier(
-            n_estimators=100,
+    X_train, X_test, y_train, y_test = (
+        train_test_split(
+            X,
+            y,
+            test_size=0.2,
             random_state=42,
-            class_weight='balanced',
-            n_jobs=-1
+            stratify=y
         )
     )
 
-    macro_f1 = make_scorer(
-        f1_score,
-        average='macro',
+    model = RandomForestClassifier(
+        n_estimators=30,
+        random_state=42,
+        class_weight="balanced",
+        n_jobs=1
+    )
+
+    model.fit(
+        X_train,
+        y_train
+    )
+
+    predictions = model.predict(
+        X_test
+    )
+
+    macro_f1 = f1_score(
+        y_test,
+        predictions,
+        average="macro",
         zero_division=0
     )
 
-    scores = cross_val_score(
-        model,
-        X,
-        y,
-        cv=skf,
-        scoring=macro_f1,
-        n_jobs=-1
-    )
-
     result = {
-        "Experiment":
-            name,
-
-        "Features":
-            X.shape[1],
-
-        "Macro F1":
-            round(
-                scores.mean(),
-                4
-            ),
-
-        "Std":
-            round(
-                scores.std(),
-                4
-            )
+        "Experiment": name,
+        "Features": X.shape[1],
+        "Macro F1": round(
+            macro_f1,
+            4
+        ),
+        "Std": 0
     }
 
     return result
@@ -240,42 +244,42 @@ if __name__ == "__main__":
 
     # Save results
 
-results_df.to_csv(
-    'src/ablation_results.csv',
-    index=False
-)
+    results_df.to_csv(
+        'src/ablation_results.csv',
+        index=False
+    )
 
-print(
-    "\n✅ Results saved to:"
-)
+    print(
+        "\n✅ Results saved to:"
+    )
 
-print(
-    "src/ablation_results.csv"
-)
+    print(
+        "src/ablation_results.csv"
+    )
 
-# Best model
+    # Best model
 
-best_idx = (
-    results_df[
-        'Macro F1'
-    ].idxmax()
-)
+    best_idx = (
+        results_df[
+            'Macro F1'
+        ].idxmax()
+    )
 
-best = (
-    results_df.loc[
-        best_idx
-    ]
-)
+    best = (
+        results_df.loc[
+            best_idx
+        ]
+    )
 
-print(
-    "\n🏆 BEST MODEL:"
-)
+    print(
+        "\n🏆 BEST MODEL:"
+    )
 
-print(
-    f"{best['Experiment']}"
-)
+    print(
+        f"{best['Experiment']}"
+    )
 
-print(
-    f"F1 Score: "
-    f"{best['Macro F1']}"
-)
+    print(
+        f"F1 Score: "
+        f"{best['Macro F1']}"
+    )
