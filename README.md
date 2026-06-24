@@ -131,3 +131,41 @@ Random Forest classifier was used to compare feature groups.
 * ablation_f1_comparison.png
 * ablation_report.txt
 
+## Week 2 Day 4 — Fusion Visualization & Analysis
+
+### Objectives
+
+* Analyze relationships between IoT sensor signals and contextual features.
+* Investigate feature interactions associated with machine failures.
+* Generate dataset profiling reports for the fused dataset.
+
+### Deliverables
+
+#### Notebook
+
+* `week2_day4_fusion_visualization.ipynb`
+
+#### Scripts
+
+* `correlation_analysis.py`
+* `interaction_plots.py`
+* `dataset_profiler.py`
+
+### Generated Outputs
+
+* Correlation Matrix
+* Correlation Report
+* Interaction Plots
+* Feature Boxplots
+* Dataset Profile Report
+
+### Key Findings
+
+* Rolling variance features show strong association with failures.
+* Tool wear related features remain highly informative.
+* Engineered interaction features contribute meaningful predictive signals.
+* Fused dataset contains 9,991 observations and 51 columns after preprocessing.
+
+### Status
+
+✅ Week 2 Day 4 Complete
