@@ -169,3 +169,29 @@ Random Forest classifier was used to compare feature groups.
 ### Status
 
 ✅ Week 2 Day 4 Complete
+
+## Week 2 Day 5 — Feature Selection & Optimization
+
+### Deliverables
+
+* feature_selector.py
+* pipeline_optimizer.py
+* validate_selected_features.py
+* week2_day5_pipeline_optimization.ipynb
+
+### Optimization Pipeline
+
+1. Variance Threshold Filtering
+2. Correlation-Based Feature Removal
+3. Random Forest Feature Importance Selection
+
+### Validation Results
+
+* No missing values detected
+* No infinite values detected
+* Binary target validation passed
+* Selected feature set validated successfully
+
+### Status
+
+✅ Week 2 Day 5 Complete
