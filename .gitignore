@@ -228,3 +228,20 @@ models/
 
 !data/.gitkeep
 !models/.gitkeep
+
+
+# ==========================
+# Predictive Maintenance Outputs
+# ==========================
+
+# Local dataset only
+data/ai4i2020.csv
+
+# Trained models
+models/
+
+# Python cache
+__pycache__/
+
+# Jupyter
+.ipynb_checkpoints/
