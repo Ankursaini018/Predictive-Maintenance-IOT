@@ -1,0 +1,122 @@
+GITHUB ISSUES STATUS TRACKER
+============================
+
+Project : Predictive-Maintenance-IOT
+Internship : Infotact DS/ML Internship
+Updated : 25 June 2026
+
+==================================================
+WEEK 1
+==================================================
+
+Issue #1
+--------
+Title  : Ingest AI4I dataset and explore structure
+Status : CLOSED
+
+Deliverables
+- Dataset exploration
+- Initial EDA
+- Week 1 notebooks
+
+--------------------------------------------------
+
+Issue #2
+--------
+Title  : Compute rolling means and signal variance
+Status : CLOSED
+
+Deliverables
+- Rolling statistics
+- Domain features
+- Lag features
+- Rate-of-change features
+- Outlier detection
+- preprocessing.py
+
+==================================================
+WEEK 2
+==================================================
+
+Issue #3
+--------
+Title  : Simulate external context data
+Status : CLOSED
+
+Deliverables
+- Weather simulator
+- Factory load simulator
+
+--------------------------------------------------
+
+Issue #4
+--------
+Title  : Merge IoT data with external context
+Status : CLOSED
+
+Deliverables
+- Data fusion pipeline
+- Context visualization
+- Fusion analysis
+
+--------------------------------------------------
+
+Issue #5
+--------
+Title  : Conduct ablation study
+Status : CLOSED
+
+Deliverables
+- Ablation framework
+- Feature comparison
+- Statistical analysis
+
+==================================================
+UPCOMING ISSUES
+==================================================
+
+Issue #6
+--------
+Title  : Implement SMOTE inside cross-validation folds
+Status : IN PROGRESS
+
+Issue #7
+--------
+Title  : Train LightGBM predictive maintenance classifier
+Status : TODO
+
+Issue #8
+--------
+Title  : Inject synthetic noise and Precision-Recall analysis
+Status : TODO
+
+Issue #9
+--------
+Title  : Tune decision threshold and document final results
+Status : TODO
+
+==================================================
+KANBAN STATUS
+==================================================
+
+Done
+-----
+#1
+#2
+#3
+#4
+#5
+
+In Progress
+-----------
+#6
+
+Todo
+----
+#7
+#8
+#9
+
+==================================================
+END OF STATUS REPORT
+==================================================
