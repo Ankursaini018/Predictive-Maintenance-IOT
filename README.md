@@ -1,5 +1,12 @@
 # 🔧 Predictive Maintenance IoT (Contextual Edge AI)
 
+![Progress](https://img.shields.io/badge/Progress-Week%202%20Complete-success)
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![Scikit--Learn](https://img.shields.io/badge/Scikit--Learn-ML-orange)
+![Status](https://img.shields.io/badge/Status-Mid%20Review%20Ready-brightgreen)
+![Internship](https://img.shields.io/badge/Infotact-DS%2FML%20Internship-purple)
+
+
 > **Infotact DS/ML Internship – Project 1**
 
 A machine learning pipeline for **predictive maintenance** using the **AI4I 2020 Predictive Maintenance Dataset**, enhanced with **simulated contextual information** such as weather and factory load to improve failure prediction.
@@ -192,4 +199,24 @@ python src/pipeline_optimizer.py
 
 B.Tech Artificial Intelligence
 
-Infotact DS/ML Internship
+Infotact DS/ML Internship       
+
+---
+
+# 📈 Current Status
+
+## ✅ Completed
+
+- Week 1 – IoT Data Exploration & Feature Engineering
+- Week 2 – Context Simulation, Data Fusion & Optimization
+
+## 🔄 In Progress
+
+- Week 3 – SMOTE Integration
+- LightGBM Model Development
+
+## 📅 Upcoming
+
+- Precision–Recall Analysis
+- Threshold Optimization
+- Final Documentation
