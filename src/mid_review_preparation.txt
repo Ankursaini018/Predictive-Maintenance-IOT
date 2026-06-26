@@ -1,0 +1,168 @@
+MID REVIEW PREPARATION
+======================
+
+Project
+-------
+Contextual Predictive Maintenance (IoT Edge AI)
+
+Repository
+----------
+Predictive-Maintenance-IOT
+
+Internship
+----------
+Infotact DS/ML Internship
+
+Date
+----
+25 June 2026
+
+==================================================
+PROJECT OVERVIEW
+==================================================
+
+This project focuses on predicting machine failures
+using IoT sensor data enriched with contextual
+information such as weather conditions and
+factory workload.
+
+The objective is to improve predictive performance
+through feature engineering, contextual data fusion,
+feature selection and machine learning.
+
+==================================================
+WEEK 1 ACHIEVEMENTS
+==================================================
+
+Dataset
+-------
+✓ AI4I 2020 Predictive Maintenance Dataset explored
+
+Feature Engineering
+-------------------
+✓ Rolling Mean
+✓ Rolling Variance
+✓ Domain Features
+✓ Lag Features
+✓ Rate of Change Features
+✓ Outlier Detection
+
+Deliverables
+------------
+✓ preprocessing.py
+✓ visualizations.py
+✓ data_validator.py
+✓ test_preprocessing.py
+
+==================================================
+WEEK 2 ACHIEVEMENTS
+==================================================
+
+Context Generation
+------------------
+✓ Weather Simulator
+✓ Factory Load Simulator
+
+Data Fusion
+-----------
+✓ Timestamp-based Data Fusion
+✓ Context Analysis
+
+Model Analysis
+--------------
+✓ Ablation Study
+✓ Feature Importance
+✓ Correlation Analysis
+✓ Interaction Plots
+
+Optimization
+------------
+✓ Feature Selection
+✓ Pipeline Optimization
+✓ Dataset Validation
+
+Project Maintenance
+-------------------
+✓ README Updated
+✓ Package Refactoring
+✓ Notebook Documentation
+✓ GitHub Project Board Updated
+
+==================================================
+CURRENT PROJECT STATUS
+==================================================
+
+Completed Issues
+
+✓ Issue #1
+✓ Issue #2
+✓ Issue #3
+✓ Issue #4
+✓ Issue #5
+
+Current Issue
+
+🔄 Issue #6
+Implement SMOTE inside cross-validation folds
+
+Upcoming
+
+• Train LightGBM Classifier
+• Precision-Recall Analysis
+• Threshold Optimization
+
+==================================================
+MID REVIEW CHECKLIST
+==================================================
+
+✓ Repository Updated
+
+✓ GitHub Project Board Updated
+
+✓ README Documentation Complete
+
+✓ Week 1 Notebooks Available
+
+✓ Week 2 Notebooks Available
+
+✓ Source Code Organized
+
+✓ Modular Project Structure
+
+✓ Semantic Git Commits
+
+==================================================
+PROJECT STRUCTURE
+==================================================
+
+data/
+
+models/
+
+notebooks/
+
+src/
+
+README.md
+
+requirements.txt
+
+==================================================
+NEXT PHASE
+==================================================
+
+Week 3
+
+• SMOTE inside Cross Validation
+
+• LightGBM Training
+
+• Hyperparameter Tuning
+
+• Model Evaluation
+
+==================================================
+STATUS
+
+READY FOR MID REVIEW
+==================================================
