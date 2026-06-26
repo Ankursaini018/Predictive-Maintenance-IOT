@@ -179,19 +179,42 @@ python src/pipeline_optimizer.py
 
 ---
 
-# 📊 Current Status
+## 📊 Current Status
 
-| Module | Status |
-|---------|--------|
-| Week 1 | ✅ Completed |
-| Week 2 Day 1 | ✅ Completed |
-| Week 2 Day 2 | ✅ Completed |
-| Week 2 Day 3 | ✅ Completed |
-| Week 2 Day 4 | ✅ Completed |
-| Week 2 Day 5 | ✅ Completed |
-| Week 2 Day 6 | 🚧 In Progress |
+| Module       | Status         |
+| ------------ | -------------- |
+| Week 1       | ✅ Completed    |
+| Week 2 Day 1 | ✅ Completed    |
+| Week 2 Day 2 | ✅ Completed    |
+| Week 2 Day 3 | ✅ Completed    |
+| Week 2 Day 4 | ✅ Completed    |
+| Week 2 Day 5 | ✅ Completed    |
+| Week 2 Day 6 | ✅ Completed    |
+| Week 2 Day 7 | ✅ Completed    |
+| Week 3       | 🚧 In Progress |
+
 
 ---
+
+## 📈 Current Status
+
+### ✅ Completed
+
+* **Week 1** – Data Exploration & Feature Engineering
+* **Week 2** – Context Simulation, Data Fusion, Feature Analysis & Pipeline Optimization
+
+### 🚧 In Progress
+
+* **Week 3** – SMOTE Integration
+* **LightGBM Model Development**
+
+### 📅 Upcoming
+
+* Precision–Recall Curve Analysis
+* Decision Threshold Optimization
+* Final Model Evaluation
+* Project Documentation & Deployment Preparation
+
 
 # 👨‍💻 Author
 
@@ -203,20 +226,3 @@ Infotact DS/ML Internship
 
 ---
 
-# 📈 Current Status
-
-## ✅ Completed
-
-- Week 1 – IoT Data Exploration & Feature Engineering
-- Week 2 – Context Simulation, Data Fusion & Optimization
-
-## 🔄 In Progress
-
-- Week 3 – SMOTE Integration
-- LightGBM Model Development
-
-## 📅 Upcoming
-
-- Precision–Recall Analysis
-- Threshold Optimization
-- Final Documentation
