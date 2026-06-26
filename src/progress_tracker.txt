@@ -1,0 +1,132 @@
+PROJECT PROGRESS TRACKER
+========================
+
+Project
+-------
+Contextual Predictive Maintenance (IoT Edge AI)
+
+Repository
+----------
+Predictive-Maintenance-IOT
+
+Internship
+----------
+Infotact DS/ML Internship
+
+Last Updated
+------------
+25 June 2026
+
+==================================================
+WEEK 1
+==================================================
+
+Status
+------
+✅ Completed
+
+Achievements
+------------
+✓ AI4I Dataset Exploration
+✓ Signal Analysis
+✓ Rolling Features
+✓ Domain Features
+✓ Lag Features
+✓ Rate of Change Features
+✓ Outlier Detection
+✓ Modular Preprocessing Pipeline
+
+==================================================
+WEEK 2
+==================================================
+
+Status
+------
+✅ Completed
+
+Achievements
+------------
+✓ Weather Simulator
+✓ Factory Load Simulator
+✓ Context Data Fusion
+✓ Correlation Analysis
+✓ Interaction Analysis
+✓ Dataset Profiling
+✓ Ablation Study
+✓ Feature Selection
+✓ Pipeline Optimization
+✓ Feature Validation
+✓ Documentation Improvements
+
+==================================================
+WEEK 3
+==================================================
+
+Status
+------
+🔄 Planned
+
+Upcoming Tasks
+--------------
+• Issue #6
+  Implement SMOTE inside Cross Validation
+
+• Issue #7
+  Train LightGBM Classifier
+
+• Hyperparameter Optimization
+
+• Model Evaluation
+
+==================================================
+WEEK 4
+==================================================
+
+Status
+------
+📅 Planned
+
+Upcoming Tasks
+--------------
+• Synthetic Noise Injection
+
+• Precision-Recall Analysis
+
+• Decision Threshold Optimization
+
+• Final Project Documentation
+
+==================================================
+OVERALL PROGRESS
+==================================================
+
+Week 1
+100%
+
+Week 2
+100%
+
+Week 3
+0%
+
+Week 4
+0%
+
+Overall Project Completion
+--------------------------
+50%
+
+==================================================
+NEXT MILESTONE
+==================================================
+
+Begin Week 3
+
+Issue #6
+
+Implement SMOTE inside
+Cross Validation Folds
+
+==================================================
+END OF REPORT
+==================================================
