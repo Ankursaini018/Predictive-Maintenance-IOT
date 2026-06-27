@@ -118,6 +118,34 @@ Predictive-Maintenance-IOT/
 - Documentation improvements
 
 ---
+## Week 3 — LightGBM + SMOTE Modeling 🔄 IN PROGRESS
+
+### Model Configuration
+| Parameter | Value |
+|---|---|
+| Algorithm | LightGBM (GBDT) |
+| CV Strategy | 5-Fold Stratified |
+| Imbalance | SMOTE inside folds only |
+| Num Leaves | 31 |
+| Learning Rate | 0.05 |
+| N Estimators | 300 |
+| Class Weight | Balanced |
+
+### Results (Day 1 Baseline)
+| Metric | Score |
+|---|---|
+| Macro F1 | In progress |
+| ROC AUC | In progress |
+| Precision | In progress |
+| Recall | In progress |
+| Target F1 | ≥ 0.85 |
+
+### Week 3 Source Scripts
+| Script | Purpose |
+|---|---|
+| lgbm_smote_pipeline.py | SMOTE + LightGBM CV |
+| results_visualizer.py | ROC PR curve plots |
+| model_evaluator.py | Full evaluation pipeline |
 
 # 📈 Current Pipeline
 
