@@ -1,0 +1,15 @@
+{
+    "objective": "binary",
+    "boosting_type": "gbdt",
+    "metric": "binary_logloss",
+    "class_weight": "balanced",
+    "feature_fraction": 0.9,
+    "bagging_fraction": 0.8,
+    "bagging_freq": 5,
+    "random_state": 42,
+    "verbosity": -1,
+    "num_leaves": 63,
+    "learning_rate": 0.05,
+    "n_estimators": 300,
+    "min_child_samples": 20
+}
