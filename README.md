@@ -147,6 +147,134 @@ Predictive-Maintenance-IOT/
 | results_visualizer.py | ROC PR curve plots |
 | model_evaluator.py | Full evaluation pipeline |
 
+---
+
+# Week 3 — Day 2 : Hyperparameter Optimization & Final Model Training ✅
+
+## Objective
+Improve the LightGBM model by tuning hyperparameters using both Grid Search and Bayesian Optimization (Optuna), then train the final production-ready model using the best configuration.
+
+---
+
+## Commit 1 — Focused Grid Search
+
+### Implemented
+- Built a focused Grid Search pipeline for LightGBM.
+- Evaluated multiple hyperparameter combinations.
+- Used 5-Fold Stratified Cross Validation.
+- Applied SMOTE only on training folds to prevent data leakage.
+- Selected the best configuration using Macro F1 Score.
+
+### Output Files
+- `grid_search_results.csv`
+- `best_parameters.json`
+
+---
+
+## Commit 2 — Optuna Hyperparameter Optimization
+
+### Implemented
+- Integrated Optuna Bayesian Optimization.
+- Automated hyperparameter tuning.
+- Optimized:
+  - num_leaves
+  - learning_rate
+  - n_estimators
+  - min_child_samples
+  - feature_fraction
+  - bagging_fraction
+  - reg_alpha
+  - reg_lambda
+
+### Generated Files
+- `optuna_best_parameters.json`
+- `optuna_trial_history.csv`
+- `optimization_history.png`
+- `parameter_importance.png`
+
+---
+
+## Commit 3 — Hyperparameter Tuning Notebook
+
+Created an interactive Jupyter Notebook demonstrating:
+
+- Grid Search workflow
+- Hyperparameter comparison
+- Optuna optimization results
+- Visualization of tuning history
+- Final observations
+
+Notebook:
+
+```
+notebooks/week3_day2_hyperparameter_tuning.ipynb
+```
+
+---
+
+## Commit 4 — Final Tuned Model
+
+Implemented a production-ready training pipeline.
+
+### Features
+
+- Loads best Optuna parameters
+- Uses 5-Fold Stratified Cross Validation
+- Applies SMOTE inside training folds
+- Trains final LightGBM model
+- Computes:
+  - Macro F1
+  - ROC AUC
+  - Precision
+  - Recall
+- Generates Classification Report
+- Saves trained model summary
+
+### Generated Files
+
+```
+models/
+└── best_lightgbm_model.pkl
+
+src/tuning_results/
+└── best_model_summary.txt
+```
+
+---
+
+## Performance Summary
+
+| Metric | Result |
+|---------|---------|
+| Algorithm | LightGBM |
+| Validation | Stratified 5-Fold CV |
+| Sampling | SMOTE |
+| Hyperparameter Search | Grid Search + Optuna |
+| Evaluation Metric | Macro F1 |
+| Best Macro F1 | ~0.93 |
+| Target Achieved | ✅ |
+
+---
+
+## Skills Practiced
+
+- Hyperparameter Tuning
+- Bayesian Optimization
+- Optuna
+- Grid Search
+- Cross Validation
+- SMOTE
+- Model Evaluation
+- LightGBM
+- Model Serialization
+- Machine Learning Pipeline Design
+
+---
+
+## Week 3 Day 2 Status
+
+✅ Completed Successfully
+
 # 📈 Current Pipeline
 
 ```text
