@@ -275,6 +275,143 @@ src/tuning_results/
 
 ✅ Completed Successfully
 
+---
+
+# Week 3 — Day 3 : SHAP Explainability & Feature Importance ✅
+
+## Objective
+
+Improve the interpretability of the final LightGBM model by analyzing feature importance using SHAP (SHapley Additive Explanations). This helps explain *why* the model predicts machine failures and increases model transparency.
+
+---
+
+## Commit 1 — SHAP Analysis Pipeline
+
+### Implemented
+
+- Created `shap_analyzer.py`
+- Loaded the final tuned LightGBM model
+- Computed SHAP values
+- Generated global and local feature explanations
+
+### Generated Files
+
+- `shap_summary_plot.png`
+- `shap_feature_importance.png`
+- `shap_waterfall_plot.png`
+- `shap_feature_ranking.csv`
+- `shap_analysis_report.txt`
+
+---
+
+## Commit 2 — SHAP Visualization Dashboard
+
+### Implemented
+
+Created additional visualization utilities for SHAP analysis:
+
+- Top 20 Feature Importance
+- Feature Category Distribution
+- Cumulative Feature Importance
+- Feature Importance Histogram
+
+### Generated Files
+
+- `top20_shap_features.png`
+- `feature_category_distribution.png`
+- `feature_importance_histogram.png`
+- `cumulative_feature_importance.png`
+- `shap_visualization_report.txt`
+
+---
+
+## Commit 3 — SHAP Analysis Notebook
+
+Created an interactive Jupyter Notebook demonstrating:
+
+- Loading SHAP results
+- Feature ranking analysis
+- Category-wise importance
+- Visualization dashboard
+- Interpretation of model behavior
+
+Notebook:
+
+```text
+notebooks/week3_day3_shap_analysis.ipynb
+```
+
+---
+
+## Commit 4 — SHAP Findings Report
+
+Prepared a detailed explainability report including:
+
+- Methodology
+- Feature importance analysis
+- Category contribution
+- Model transparency
+- Practical findings
+
+Report:
+
+```text
+src/tuning_results/shap_findings_report.md
+```
+
+---
+
+## Key Findings
+
+- SHAP identified the most influential features driving machine failure prediction.
+- Engineered features significantly improved predictive performance.
+- Temperature, torque, rotational speed, and tool wear were among the most important feature groups.
+- SHAP provided both global and local explanations, improving model transparency.
+
+---
+
+## Skills Practiced
+
+- Explainable AI (XAI)
+- SHAP
+- Feature Importance Analysis
+- Model Interpretability
+- Data Visualization
+- LightGBM Explainability
+- Feature Engineering Evaluation
+
+---
+
+## Output Files
+
+```text
+src/
+├── shap_analyzer.py
+├── shap_visualizer.py
+
+src/tuning_results/
+├── shap_summary_plot.png
+├── shap_feature_importance.png
+├── shap_waterfall_plot.png
+├── shap_feature_ranking.csv
+├── top20_shap_features.png
+├── feature_category_distribution.png
+├── feature_importance_histogram.png
+├── cumulative_feature_importance.png
+├── shap_analysis_report.txt
+├── shap_visualization_report.txt
+└── shap_findings_report.md
+
+notebooks/
+└── week3_day3_shap_analysis.ipynb
+```
+
+---
+
+## Week 3 Day 3 Status
+
+✅ Completed Successfully
+
 # 📈 Current Pipeline
 
 ```text
