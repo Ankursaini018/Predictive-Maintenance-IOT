@@ -1,0 +1,28 @@
+============================================================
+SHAP FEATURE IMPORTANCE REPORT
+============================================================
+
+Top 20 Important Features
+----------------------------------------
+
+                            Feature  Mean SHAP
+                              power   2.109887
+             Rotational speed [rpm]   1.866245
+                         temp_delta   1.340454
+                       load_encoded   1.334050
+                     torque_per_rpm   1.209082
+                       type_encoded   1.028478
+                     tool_wear_rate   0.968094
+                    Tool wear [min]   0.877518
+            Tool wear [min]_roc_abs   0.738422
+                Tool wear [min]_roc   0.547877
+              temp_wear_interaction   0.418857
+                    weather_encoded   0.325299
+                        Torque [Nm]   0.243483
+Rotational speed [rpm]_outlier_flag   0.235142
+                       humidity_pct   0.232319
+                total_anomaly_score   0.212252
+       Air temperature [K]_roll_var   0.209266
+        Rotational speed [rpm]_lag3   0.160605
+   Process temperature [K]_roll_var   0.160580
+                       factory_load   0.159043
