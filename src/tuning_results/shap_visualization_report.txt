@@ -1,0 +1,38 @@
+============================================================
+SHAP VISUALIZATION REPORT
+============================================================
+
+Top 20 Features
+------------------------------
+                            Feature  Mean SHAP     Category
+                              power   2.109887   Engineered
+             Rotational speed [rpm]   1.866245     Rotation
+                         temp_delta   1.340454   Engineered
+                       load_encoded   1.334050   Engineered
+                     torque_per_rpm   1.209082       Torque
+                       type_encoded   1.028478 Machine Type
+                     tool_wear_rate   0.968094    Tool Wear
+                    Tool wear [min]   0.877518    Tool Wear
+            Tool wear [min]_roc_abs   0.738422    Tool Wear
+                Tool wear [min]_roc   0.547877    Tool Wear
+              temp_wear_interaction   0.418857    Tool Wear
+                    weather_encoded   0.325299      Weather
+                        Torque [Nm]   0.243483       Torque
+Rotational speed [rpm]_outlier_flag   0.235142     Rotation
+                       humidity_pct   0.232319      Weather
+                total_anomaly_score   0.212252   Engineered
+       Air temperature [K]_roll_var   0.209266  Temperature
+        Rotational speed [rpm]_lag3   0.160605     Rotation
+   Process temperature [K]_roll_var   0.160580  Temperature
+                       factory_load   0.159043   Engineered
+
+Category Contribution
+------------------------------
+Category
+Engineered      5.847006
+Tool Wear       3.980885
+Rotation        2.861337
+Torque          2.061665
+Temperature     1.231317
+Machine Type    1.028478
+Weather         0.557618
