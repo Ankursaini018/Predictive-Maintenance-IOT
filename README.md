@@ -411,6 +411,200 @@ notebooks/
 ## Week 3 Day 3 Status
 
 ✅ Completed Successfully
+---
+
+# Week 3 — Final Model Development & Evaluation ✅ COMPLETE
+
+## Overview
+
+Week 3 focused on transforming the predictive maintenance project into a production-ready machine learning pipeline by combining:
+
+- LightGBM Classification
+- SMOTE for Class Imbalance
+- Hyperparameter Optimization
+- SHAP Explainability
+- Final Model Evaluation
+- Model Persistence
+- Reproducible Training Pipeline
+
+---
+
+# Week 3 Progress
+
+| Day | Focus | Status |
+|------|-------|--------|
+| Day 1 | LightGBM + SMOTE | ✅ |
+| Day 2 | Hyperparameter Optimization | ✅ |
+| Day 3 | SHAP Explainability | ✅ |
+| Day 4 | Final Evaluation & Model Persistence | ✅ |
+
+---
+
+# Final Pipeline
+
+```
+Dataset
+        │
+        ▼
+Feature Engineering
+        │
+        ▼
+Data Fusion
+        │
+        ▼
+SMOTE (Training Folds Only)
+        │
+        ▼
+LightGBM
+        │
+        ▼
+Optuna Hyperparameter Tuning
+        │
+        ▼
+SHAP Explainability
+        │
+        ▼
+Final Evaluation
+        │
+        ▼
+Saved Model + Metadata
+```
+
+---
+
+# Week 3 Deliverables
+
+## Python Modules
+
+```
+src/
+
+lgbm_smote_pipeline.py
+
+hyperparameter_tuner.py
+
+optuna_tuner.py
+
+best_model_trainer.py
+
+shap_analyzer.py
+
+shap_visualizer.py
+
+final_model_pipeline.py
+
+model_saver.py
+```
+
+---
+
+## Jupyter Notebooks
+
+```
+notebooks/
+
+week3_day1_lgbm_training.ipynb
+
+week3_day2_hyperparameter_tuning.ipynb
+
+week3_day3_shap_analysis.ipynb
+
+week3_day4_final_evaluation.ipynb
+```
+
+---
+
+## Reports
+
+```
+docs/
+
+week3_completion_report.md
+
+src/
+
+model_metadata.json
+
+reproduction_guide.txt
+
+tuning_results/
+```
+
+---
+
+# Techniques Used
+
+- LightGBM
+- SMOTE
+- Stratified 5-Fold Cross Validation
+- Grid Search
+- Optuna
+- SHAP Explainability
+- Model Evaluation
+- ROC-AUC
+- Precision–Recall Analysis
+- Confusion Matrix
+- Feature Importance
+- Model Serialization
+- Reproducible Machine Learning
+
+---
+
+# Week 3 Outcomes
+
+- Successfully addressed class imbalance using SMOTE.
+- Tuned LightGBM using Grid Search and Optuna.
+- Built reusable training and evaluation pipelines.
+- Added explainability using SHAP.
+- Created reusable notebooks for experimentation.
+- Saved model metadata and reproduction guide.
+- Prepared the project for final optimization in Week 4.
+
+---
+
+# Repository Structure
+
+```
+Predictive-Maintenance-IOT/
+
+src/
+models/
+docs/
+notebooks/
+data/
+```
+
+---
+
+# Week 4 Roadmap
+
+The final week of the internship will focus on:
+
+- Noise Sensitivity Analysis
+- Threshold Optimization
+- Precision–Recall Optimization
+- Final Documentation
+- Repository Cleanup
+- Submission Preparation
+
+---
+
+# Internship Progress
+
+| Week | Status |
+|------|--------|
+| Week 1 | ✅ Completed |
+| Week 2 | ✅ Completed |
+| Week 3 | ✅ Completed |
+| Week 4 | 🚀 In Progress |
+
+---
+
+## Project Status
+
+**Current Stage:** Week 3 Completed Successfully 🎉
+
+The project now contains a complete machine learning workflow including data preprocessing, feature engineering, hyperparameter optimization, explainability, evaluation, and model persistence. The remaining work in Week 4 will focus on optimization, documentation, and final submission.
 
 # 📈 Current Pipeline
 
