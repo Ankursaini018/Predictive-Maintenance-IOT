@@ -1,0 +1,41 @@
+======================================================================
+FINAL MODEL EVALUATION SUMMARY
+======================================================================
+
+Performance Metrics
+----------------------------------------
+Macro F1        : 0.9249
+Std F1          : 0.0197
+ROC AUC         : 0.9763
+Std ROC AUC     : 0.0103
+Precision       : 0.9653
+Recall          : 0.8928
+
+Best Hyperparameters
+----------------------------------------
+objective                : binary
+metric                   : binary_logloss
+boosting_type            : gbdt
+class_weight             : balanced
+random_state             : 42
+verbosity                : -1
+num_leaves               : 43
+learning_rate            : 0.06839612288317243
+n_estimators             : 274
+min_child_samples        : 10
+feature_fraction         : 0.9407466163611916
+bagging_fraction         : 0.641456609384317
+reg_alpha                : 0.0004840672101776152
+reg_lambda               : 9.031740155695098e-06
+best_macro_f1            : 0.9249
+
+Classification Report
+----------------------------------------
+              precision    recall  f1-score   support
+
+  No Failure       0.99      1.00      1.00      9652
+     Failure       0.94      0.79      0.86       339
+
+    accuracy                           0.99      9991
+   macro avg       0.96      0.89      0.93      9991
+weighted avg       0.99      0.99      0.99      9991
