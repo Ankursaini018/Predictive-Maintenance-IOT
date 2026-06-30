@@ -1,0 +1,32 @@
+
+=========================================================
+MODEL REPRODUCTION GUIDE
+=========================================================
+
+This project stores only metadata on GitHub.
+
+The trained model (.pkl) is generated locally.
+
+To reproduce the model:
+
+1. Place dataset in:
+
+   data/ai4i2020.csv
+
+2. Run:
+
+   python src/final_model_pipeline.py
+
+3. Save the trained model:
+
+   python src/model_saver.py
+
+Generated files:
+
+models/
+    lightgbm_best_model.pkl
+
+src/
+    model_metadata.json
+
+=========================================================
