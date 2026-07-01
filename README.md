@@ -599,12 +599,176 @@ The final week of the internship will focus on:
 | Week 4 | 🚀 In Progress |
 
 ---
+---
 
-## Project Status
+# Week 4 — Day 1: Noise Robustness Analysis ✅ COMPLETE
 
-**Current Stage:** Week 3 Completed Successfully 🎉
+## Overview
 
-The project now contains a complete machine learning workflow including data preprocessing, feature engineering, hyperparameter optimization, explainability, evaluation, and model persistence. The remaining work in Week 4 will focus on optimization, documentation, and final submission.
+The first day of Week 4 focused on evaluating the robustness of the trained LightGBM model under different synthetic sensor noise conditions. This analysis helps determine how well the model performs in realistic industrial IoT environments where sensors may produce noisy or unreliable readings.
+
+---
+
+# Objectives
+
+- Inject synthetic noise into sensor features
+- Evaluate model robustness
+- Compare multiple noise types
+- Measure Macro F1 degradation
+- Visualize robustness curves
+- Prepare robustness report
+
+---
+
+# Day 1 Progress
+
+| Commit | Task | Status |
+|---------|------|--------|
+| Commit 1 | Noise Injection Pipeline | ✅ |
+| Commit 2 | Robustness Testing | ✅ |
+| Commit 3 | Analysis Notebook | ✅ |
+| Commit 4 | Robustness Report | ✅ |
+| Commit 5 | README Update | ✅ |
+
+---
+
+# Noise Types Evaluated
+
+- Gaussian Noise
+- Missing Values
+- Sensor Drift
+- Spike Noise
+- Scaling Noise
+
+---
+
+# Robustness Evaluation Pipeline
+
+```text
+Original Dataset
+        │
+        ▼
+Feature Engineering
+        │
+        ▼
+Data Fusion
+        │
+        ▼
+Train Final LightGBM Model
+        │
+        ▼
+Inject Synthetic Noise
+        │
+        ▼
+Prediction
+        │
+        ▼
+Macro F1 Evaluation
+        │
+        ▼
+Performance Drop Analysis
+        │
+        ▼
+Robustness Report
+```
+
+---
+
+# Deliverables
+
+## Python Modules
+
+```text
+src/
+
+noise_injector.py
+
+robustness_tester.py
+```
+
+---
+
+## Notebook
+
+```text
+notebooks/
+
+week4_day1_noise_analysis.ipynb
+```
+
+---
+
+## Documentation
+
+```text
+docs/
+
+robustness_report.md
+```
+
+---
+
+## Generated Results
+
+```text
+src/tuning_results/
+
+robustness_curves.png
+
+robustness_results.csv
+
+robustness_summary.csv
+```
+
+---
+
+# Techniques Used
+
+- Synthetic Noise Injection
+- Gaussian Noise Simulation
+- Missing Value Simulation
+- Sensor Drift Simulation
+- Spike Noise Simulation
+- Scaling Noise Simulation
+- Robustness Testing
+- Macro F1 Evaluation
+- Performance Degradation Analysis
+- Visualization using Matplotlib
+
+---
+
+# Key Outcomes
+
+- Evaluated model robustness against multiple synthetic noise types.
+- Measured performance degradation across increasing noise levels.
+- Generated robustness curves for visual analysis.
+- Identified the relative impact of different noise patterns on prediction quality.
+- Established a reproducible robustness evaluation workflow.
+
+---
+
+# Week 4 Progress
+
+| Day | Focus | Status |
+|-----|-------|--------|
+| Day 1 | Noise Robustness Analysis | ✅ |
+| Day 2 | Threshold Optimization | ⏳ |
+| Day 3 | Final Evaluation | ⏳ |
+| Day 4 | Documentation & Cleanup | ⏳ |
+
+---
+
+## Current Project Status
+
+✅ Week 1 Completed
+
+✅ Week 2 Completed
+
+✅ Week 3 Completed
+
+🚀 Week 4 Day 1 Completed
+
+The project now includes preprocessing, feature engineering, data fusion, LightGBM training, SMOTE, hyperparameter optimization, SHAP explainability, model persistence, and robustness evaluation under synthetic noise.
 
 # 📈 Current Pipeline
 
@@ -666,42 +830,54 @@ python src/pipeline_optimizer.py
 
 ---
 
-## 📊 Current Status
+---
 
-| Module       | Status         |
-| ------------ | -------------- |
-| Week 1       | ✅ Completed    |
-| Week 2 Day 1 | ✅ Completed    |
-| Week 2 Day 2 | ✅ Completed    |
-| Week 2 Day 3 | ✅ Completed    |
-| Week 2 Day 4 | ✅ Completed    |
-| Week 2 Day 5 | ✅ Completed    |
-| Week 2 Day 6 | ✅ Completed    |
-| Week 2 Day 7 | ✅ Completed    |
-| Week 3       | 🚧 In Progress |
+# ☑️ Current Status
 
+| Module | Status |
+|---------|--------|
+| Week 1 | ✅ Completed |
+| Week 2 | ✅ Completed |
+| Week 3 | ✅ Completed |
+| Week 4 Day 1 | ✅ Completed |
+| Week 4 Day 2 | ⏳ Upcoming |
+| Week 4 Day 3 | ⏳ Upcoming |
+| Week 4 Day 4 | ⏳ Upcoming |
 
 ---
 
-## 📈 Current Status
+## ✅ Completed
 
-### ✅ Completed
+- **Week 1** – Data Exploration & Feature Engineering
+- **Week 2** – Context Simulation, Data Fusion & Pipeline Optimization
+- **Week 3** – LightGBM Model Development, SMOTE, Hyperparameter Tuning, SHAP Explainability & Final Model Pipeline
+- **Week 4 Day 1** – Noise Injection & Model Robustness Analysis
 
-* **Week 1** – Data Exploration & Feature Engineering
-* **Week 2** – Context Simulation, Data Fusion, Feature Analysis & Pipeline Optimization
+---
 
-### 🚧 In Progress
+## 🚀 Upcoming
 
-* **Week 3** – SMOTE Integration
-* **LightGBM Model Development**
+- Decision Threshold Optimization
+- Precision–Recall Curve Analysis
+- Business Metric Optimization
+- Final Model Evaluation
+- Repository Cleanup
+- Documentation & Deployment Preparation
 
-### 📅 Upcoming
+---
 
-* Precision–Recall Curve Analysis
-* Decision Threshold Optimization
-* Final Model Evaluation
-* Project Documentation & Deployment Preparation
+# 📊 Overall Internship Progress
 
+| Week | Progress |
+|------|----------|
+| Week 1 | ✅ 100% |
+| Week 2 | ✅ 100% |
+| Week 3 | ✅ 100% |
+| Week 4 | 🟡 Day 1 Completed (25%) |
+
+**Overall Project Completion:** **~81%** 🚀
+
+---
 
 # 👨‍💻 Author
 
@@ -709,7 +885,9 @@ python src/pipeline_optimizer.py
 
 B.Tech Artificial Intelligence
 
-Infotact DS/ML Internship       
+Infotact DS/ML Internship
 
 ---
+
+⭐ If you found this project useful, consider giving it a **Star** on GitHub.
 
