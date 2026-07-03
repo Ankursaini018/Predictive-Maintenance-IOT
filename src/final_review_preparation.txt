@@ -1,0 +1,147 @@
+FINAL REVIEW PREPARATION DOCUMENT
+====================================
+Project  : Predictive Maintenance IoT
+Intern   : Solo Worker (Ankur Saini)
+Review   : Final Review (5th-10th July 2026)
+Date     : 3rd July 2026
+
+════════════════════════════════════════════
+SECTION 1: OPENING STATEMENT (Memorize!)
+════════════════════════════════════════════
+
+"I completed Project 1 — Contextual Predictive
+Maintenance using IoT Edge AI.
+
+In Week 1, I built a complete IoT feature
+engineering pipeline with 50+ features on the
+AI4I 2020 dataset including rolling signals,
+domain features, lag features and outlier flags.
+
+In Week 2, I fused IoT data with external weather
+and factory load context using timestamp-based
+merging. I conducted a 7-group ablation study with
+statistical tests proving external features improve
+prediction accuracy.
+
+In Week 3, I trained a LightGBM classifier with
+SMOTE applied strictly inside CV folds to prevent
+data leakage, achieving Macro F1 close to or above
+the 0.85 target.
+
+In Week 4, I tested model robustness with 5 types
+of synthetic noise, plotted PR curves, and tuned
+the decision threshold using 4 business strategies
+to balance false alarms vs missed failures.
+
+My GitHub shows consistent daily commits with all
+9 issues properly closed."
+
+════════════════════════════════════════════
+SECTION 2: LIKELY QUESTIONS
+════════════════════════════════════════════
+
+Q: What is your Macro F1 score?
+A: Check src/project_summary.json
+   and src/model_metadata.json
+
+Q: Why LightGBM over Random Forest?
+A: LightGBM is faster, handles imbalance
+   better with class_weight='balanced',
+   supports early stopping, and gives
+   better performance on tabular data
+   with gradient boosting.
+
+Q: How did you handle class imbalance?
+A: Two ways:
+   1. class_weight='balanced' in LightGBM
+   2. SMOTE applied ONLY inside training
+      folds during cross-validation to
+      prevent data leakage.
+
+Q: What is data leakage?
+A: When test data information contaminates
+   training. If SMOTE is done before CV
+   split, synthetic samples based on test
+   data appear in training — giving
+   falsely optimistic scores.
+
+Q: What did the ablation study prove?
+A: That external context features
+   (weather + factory load) significantly
+   improve Macro F1 score over IoT-only
+   baseline. Confirmed by paired t-test
+   (p<0.05) and Wilcoxon test.
+
+Q: What is threshold tuning?
+A: By default models use 0.5 threshold.
+   For imbalanced failure prediction,
+   lowering the threshold catches more
+   failures (reduces miss rate) at cost
+   of more false alarms. We found the
+   balanced optimal threshold.
+
+Q: What noise types did you test?
+A: 5 types:
+   1. Gaussian — random measurement error
+   2. Missing — sensor connection loss
+   3. Drift — gradual sensor degradation
+   4. Spike — electrical interference
+   5. Scaling — calibration errors
+
+Q: Show me your GitHub?
+A: https://github.com/Ankursaini018/
+   Predictive-Maintenance-IOT
+
+════════════════════════════════════════════
+SECTION 3: WHAT TO SHOW
+════════════════════════════════════════════
+
+Tab 1: GitHub Repository
+→ README (scroll through)
+→ Commit history (20+ days)
+→ src/ folder structure
+
+Tab 2: Kanban Board
+→ All 9 issues in Done column
+→ Steady progression shown
+
+Tab 3: Key Notebook
+→ week4/week4_day3_final_summary.ipynb
+→ Shows final dashboard
+
+Tab 4: Model Results
+→ src/project_summary.json
+→ src/model_metadata.json
+
+Tab 5: Ablation Study
+→ week2_day3_ablation_study.ipynb
+→ Show 7-group comparison chart
+
+════════════════════════════════════════════
+SECTION 4: FINAL CHECKLIST
+════════════════════════════════════════════
+
+Before Review:
+☑ GitHub repo is PUBLIC
+☑ All notebooks outputs cleared
+☑ All 9 issues CLOSED on board
+☑ README looks professional
+☑ Daily commits visible (no gaps)
+☑ project_summary.json updated
+☑ model_metadata.json exists
+☑ requirements.txt complete
+☑ .gitignore excludes data/ models/
+
+During Review:
+☑ Open GitHub repo first
+☑ Show commit history
+☑ Show Kanban board
+☑ Run final summary notebook
+☑ Show ablation study results
+☑ Show threshold analysis
+☑ Explain SMOTE + data leakage
+☑ Show SHAP feature importance
+
+════════════════════════════════════════════
+GOOD LUCK! YOU GOT THIS! 💪🔥
+════════════════════════════════════════════
