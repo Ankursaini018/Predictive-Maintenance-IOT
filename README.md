@@ -1,893 +1,190 @@
-# 🔧 Predictive Maintenance IoT (Contextual Edge AI)
+# 🔧 Predictive Maintenance IoT
+## Infotact DS/ML Technical Internship 2026
 
-![Progress](https://img.shields.io/badge/Progress-Week%202%20Complete-success)
-![Python](https://img.shields.io/badge/Python-3.11-blue)
-![Scikit--Learn](https://img.shields.io/badge/Scikit--Learn-ML-orange)
-![Status](https://img.shields.io/badge/Status-Mid%20Review%20Ready-brightgreen)
-![Internship](https://img.shields.io/badge/Infotact-DS%2FML%20Internship-purple)
-
-
-> **Infotact DS/ML Internship – Project 1**
-
-A machine learning pipeline for **predictive maintenance** using the **AI4I 2020 Predictive Maintenance Dataset**, enhanced with **simulated contextual information** such as weather and factory load to improve failure prediction.
+![Progress](https://img.shields.io/badge/Status-Complete-brightgreen)
+![Week](https://img.shields.io/badge/Week-4%20of%204-blue)
+![Issues](https://img.shields.io/badge/Issues-9%2F9%20Closed-green)
+![Model](https://img.shields.io/badge/Model-LightGBM-orange)
+![Python](https://img.shields.io/badge/Python-3.10%2B-yellow)
 
 ---
 
-# 📌 Project Overview
+## 🎯 Project Overview
+**Type:** Contextual Predictive Maintenance (IoT Edge AI)
+**Mode:** Solo Worker
+**Dataset:** AI4I 2020 Predictive Maintenance (UCI)
 
-The objective of this project is to predict machine failures before they occur by combining:
-
-- IoT sensor telemetry
-- Engineered statistical features
-- Simulated weather conditions
-- Simulated factory load information
-
-The project follows a modular pipeline consisting of preprocessing, feature engineering, contextual data fusion, visualization, feature selection and model optimization.
-
----
-
-# 🛠️ Tech Stack
-
-| Category | Technologies |
-|-----------|--------------|
-| Language | Python 3.11 |
-| Data Processing | Pandas, NumPy |
-| Machine Learning | Scikit-Learn |
-| Visualization | Matplotlib, Seaborn |
-| Notebook | Jupyter |
-| Version Control | Git & GitHub |
+> Build an AI system that predicts machine failures
+> before they happen by fusing internal IoT sensor
+> data with external contextual signals
+> (weather + factory load).
 
 ---
 
-# 📂 Repository Structure
+## 🏆 Final Results
 
-```text
+| Metric | Score | Target |
+|---|---|---|
+| Macro F1 | See project_summary.json | ≥ 0.85 |
+| ROC AUC | See project_summary.json | - |
+| SMOTE | Inside CV folds only | ✅ |
+| Noise Robustness | Tested (5 types) | ✅ |
+| Threshold Tuned | Balanced strategy | ✅ |
+
+---
+
+## 📁 Project Structure
 Predictive-Maintenance-IOT/
 │
-├── data/
-├── models/
 ├── notebooks/
-├── src/
-│   ├── external_data/
-│   ├── preprocessing.py
-│   ├── feature_selector.py
-│   ├── pipeline_optimizer.py
-│   ├── correlation_analysis.py
-│   ├── interaction_plots.py
-│   ├── dataset_profiler.py
-│   └── utils.py
+│   ├── week1_.ipynb          # IoT ingestion
+│   ├── week2_.ipynb          # Data fusion
+│   ├── week3/
+│   │   └── week3_.ipynb      # LightGBM modeling
+│   └── week4/
+│       └── week4_.ipynb      # Noise + threshold
 │
-├── README.md
-└── requirements.txt
-```
+├── src/
+│   ├── preprocessing.py       # IoT feature pipeline
+│   ├── visualizations.py      # Plotting functions
+│   ├── data_validator.py      # Data quality checks
+│   ├── test_preprocessing.py  # Unit tests
+│   ├── utils.py               # Shared utilities
+│   ├── external_data/
+│   │   ├── weather_simulator.py
+│   │   ├── load_simulator.py
+│   │   └── data_fusion.py
+│   ├── ablation_study.py      # 7-group ablation
+│   ├── statistical_tests.py   # t-test, Wilcoxon
+│   ├── fusion_pipeline.py     # Master fusion
+│   ├── feature_selector.py    # Feature selection
+│   ├── lgbm_smote_pipeline.py # SMOTE + CV
+│   ├── hyperparameter_tuner.py
+│   ├── optuna_tuner.py
+│   ├── shap_analyzer.py       # SHAP analysis
+│   ├── shap_visualizer.py
+│   ├── final_model_pipeline.py
+│   ├── noise_injector.py      # 5-type noise
+│   ├── robustness_tester.py
+│   ├── pr_curve_analyzer.py
+│   ├── threshold_tuner.py     # 4 strategies
+│   └── project_summary.py     # Final summary
+│
+├── data/                      # gitignored
+├── models/                    # gitignored
+├── requirements.txt
+└── README.md
 
 ---
 
-# ✅ Week 1 Progress
+## 📅 Week-wise Progress
 
-### Data Exploration
-- Exploratory Data Analysis
-- Dataset validation
-- Missing value analysis
+### ✅ Week 1 — IoT Telemetry Ingestion
+| Feature Category | Count |
+|---|---|
+| Raw Sensor Features | 5 |
+| Rolling Mean/Std/Var | 15 |
+| Domain Features | 6 |
+| Lag Features | 12 |
+| Rate of Change | 6 |
+| Outlier Flags | 6 |
+| **TOTAL** | **50+** |
 
-### Feature Engineering
-- Rolling statistics
-- Lag features
-- Rate-of-change features
-- Domain-specific features
-- Outlier detection
+### ✅ Week 2 — Contextual Data Fusion
+| External Source | Features |
+|---|---|
+| Weather (Simulated) | ambient_temp, humidity, wind, pressure, condition |
+| Factory Load (Simulated) | load%, utilization%, shift, weekend, maintenance, production |
 
-### Deliverables
-- Complete preprocessing pipeline
-- Reusable visualization utilities
-- Dataset validation scripts
+**Ablation Study:** 7 feature groups tested
+**Statistical Proof:** t-test p<0.05, Wilcoxon confirmed
 
----
-
-# ✅ Week 2 Progress
-
-### Day 1
-- Contextual weather simulation
-- Factory load simulation
-- Data fusion pipeline
-
-### Day 2
-- Context feature analysis
-- Shift analysis
-- Feature importance study
-
-### Day 3
-- Ablation study
-- IoT vs Context comparison
-- Performance analysis
-
-### Day 4
-- Correlation analysis
-- Interaction plots
-- Dataset profiling
-
-### Day 5
-- Feature selection
-- Pipeline optimization
-- Feature validation
-
-### Day 6
-- Project refactoring
-- Package initialization
-- Utility module
-- Documentation improvements
-
----
-## Week 3 — LightGBM + SMOTE Modeling 🔄 IN PROGRESS
-
-### Model Configuration
-| Parameter | Value |
+### ✅ Week 3 — LightGBM + SMOTE
+| Config | Value |
 |---|---|
 | Algorithm | LightGBM (GBDT) |
 | CV Strategy | 5-Fold Stratified |
-| Imbalance | SMOTE inside folds only |
-| Num Leaves | 31 |
-| Learning Rate | 0.05 |
-| N Estimators | 300 |
-| Class Weight | Balanced |
+| Imbalance Fix | SMOTE inside folds only |
+| Tuning | Grid Search + Optuna |
+| SHAP | Feature importance analyzed |
 
-### Results (Day 1 Baseline)
-| Metric | Score |
+### ✅ Week 4 — Noise + Threshold
+| Task | Details |
 |---|---|
-| Macro F1 | In progress |
-| ROC AUC | In progress |
-| Precision | In progress |
-| Recall | In progress |
-| Target F1 | ≥ 0.85 |
-
-### Week 3 Source Scripts
-| Script | Purpose |
-|---|---|
-| lgbm_smote_pipeline.py | SMOTE + LightGBM CV |
-| results_visualizer.py | ROC PR curve plots |
-| model_evaluator.py | Full evaluation pipeline |
+| Noise Types | Gaussian, Missing, Drift, Spike, Scaling |
+| Noise Levels | 0.05 → 0.50 |
+| PR Curves | Plotted and analyzed |
+| Threshold | 4 strategies evaluated |
 
 ---
 
-# Week 3 — Day 2 : Hyperparameter Optimization & Final Model Training ✅
+## 🔬 How to Run
 
-## Objective
-Improve the LightGBM model by tuning hyperparameters using both Grid Search and Bayesian Optimization (Optuna), then train the final production-ready model using the best configuration.
-
----
-
-## Commit 1 — Focused Grid Search
-
-### Implemented
-- Built a focused Grid Search pipeline for LightGBM.
-- Evaluated multiple hyperparameter combinations.
-- Used 5-Fold Stratified Cross Validation.
-- Applied SMOTE only on training folds to prevent data leakage.
-- Selected the best configuration using Macro F1 Score.
-
-### Output Files
-- `grid_search_results.csv`
-- `best_parameters.json`
-
----
-
-## Commit 2 — Optuna Hyperparameter Optimization
-
-### Implemented
-- Integrated Optuna Bayesian Optimization.
-- Automated hyperparameter tuning.
-- Optimized:
-  - num_leaves
-  - learning_rate
-  - n_estimators
-  - min_child_samples
-  - feature_fraction
-  - bagging_fraction
-  - reg_alpha
-  - reg_lambda
-
-### Generated Files
-- `optuna_best_parameters.json`
-- `optuna_trial_history.csv`
-- `optimization_history.png`
-- `parameter_importance.png`
-
----
-
-## Commit 3 — Hyperparameter Tuning Notebook
-
-Created an interactive Jupyter Notebook demonstrating:
-
-- Grid Search workflow
-- Hyperparameter comparison
-- Optuna optimization results
-- Visualization of tuning history
-- Final observations
-
-Notebook:
-
-```
-notebooks/week3_day2_hyperparameter_tuning.ipynb
-```
-
----
-
-## Commit 4 — Final Tuned Model
-
-Implemented a production-ready training pipeline.
-
-### Features
-
-- Loads best Optuna parameters
-- Uses 5-Fold Stratified Cross Validation
-- Applies SMOTE inside training folds
-- Trains final LightGBM model
-- Computes:
-  - Macro F1
-  - ROC AUC
-  - Precision
-  - Recall
-- Generates Classification Report
-- Saves trained model summary
-
-### Generated Files
-
-```
-models/
-└── best_lightgbm_model.pkl
-
-src/tuning_results/
-└── best_model_summary.txt
-```
-
----
-
-## Performance Summary
-
-| Metric | Result |
-|---------|---------|
-| Algorithm | LightGBM |
-| Validation | Stratified 5-Fold CV |
-| Sampling | SMOTE |
-| Hyperparameter Search | Grid Search + Optuna |
-| Evaluation Metric | Macro F1 |
-| Best Macro F1 | ~0.93 |
-| Target Achieved | ✅ |
-
----
-
-## Skills Practiced
-
-- Hyperparameter Tuning
-- Bayesian Optimization
-- Optuna
-- Grid Search
-- Cross Validation
-- SMOTE
-- Model Evaluation
-- LightGBM
-- Model Serialization
-- Machine Learning Pipeline Design
-
----
-
-## Week 3 Day 2 Status
-
-✅ Completed Successfully
-
----
-
-# Week 3 — Day 3 : SHAP Explainability & Feature Importance ✅
-
-## Objective
-
-Improve the interpretability of the final LightGBM model by analyzing feature importance using SHAP (SHapley Additive Explanations). This helps explain *why* the model predicts machine failures and increases model transparency.
-
----
-
-## Commit 1 — SHAP Analysis Pipeline
-
-### Implemented
-
-- Created `shap_analyzer.py`
-- Loaded the final tuned LightGBM model
-- Computed SHAP values
-- Generated global and local feature explanations
-
-### Generated Files
-
-- `shap_summary_plot.png`
-- `shap_feature_importance.png`
-- `shap_waterfall_plot.png`
-- `shap_feature_ranking.csv`
-- `shap_analysis_report.txt`
-
----
-
-## Commit 2 — SHAP Visualization Dashboard
-
-### Implemented
-
-Created additional visualization utilities for SHAP analysis:
-
-- Top 20 Feature Importance
-- Feature Category Distribution
-- Cumulative Feature Importance
-- Feature Importance Histogram
-
-### Generated Files
-
-- `top20_shap_features.png`
-- `feature_category_distribution.png`
-- `feature_importance_histogram.png`
-- `cumulative_feature_importance.png`
-- `shap_visualization_report.txt`
-
----
-
-## Commit 3 — SHAP Analysis Notebook
-
-Created an interactive Jupyter Notebook demonstrating:
-
-- Loading SHAP results
-- Feature ranking analysis
-- Category-wise importance
-- Visualization dashboard
-- Interpretation of model behavior
-
-Notebook:
-
-```text
-notebooks/week3_day3_shap_analysis.ipynb
-```
-
----
-
-## Commit 4 — SHAP Findings Report
-
-Prepared a detailed explainability report including:
-
-- Methodology
-- Feature importance analysis
-- Category contribution
-- Model transparency
-- Practical findings
-
-Report:
-
-```text
-src/tuning_results/shap_findings_report.md
-```
-
----
-
-## Key Findings
-
-- SHAP identified the most influential features driving machine failure prediction.
-- Engineered features significantly improved predictive performance.
-- Temperature, torque, rotational speed, and tool wear were among the most important feature groups.
-- SHAP provided both global and local explanations, improving model transparency.
-
----
-
-## Skills Practiced
-
-- Explainable AI (XAI)
-- SHAP
-- Feature Importance Analysis
-- Model Interpretability
-- Data Visualization
-- LightGBM Explainability
-- Feature Engineering Evaluation
-
----
-
-## Output Files
-
-```text
-src/
-├── shap_analyzer.py
-├── shap_visualizer.py
-
-src/tuning_results/
-├── shap_summary_plot.png
-├── shap_feature_importance.png
-├── shap_waterfall_plot.png
-├── shap_feature_ranking.csv
-├── top20_shap_features.png
-├── feature_category_distribution.png
-├── feature_importance_histogram.png
-├── cumulative_feature_importance.png
-├── shap_analysis_report.txt
-├── shap_visualization_report.txt
-└── shap_findings_report.md
-
-notebooks/
-└── week3_day3_shap_analysis.ipynb
-```
-
----
-
-## Week 3 Day 3 Status
-
-✅ Completed Successfully
----
-
-# Week 3 — Final Model Development & Evaluation ✅ COMPLETE
-
-## Overview
-
-Week 3 focused on transforming the predictive maintenance project into a production-ready machine learning pipeline by combining:
-
-- LightGBM Classification
-- SMOTE for Class Imbalance
-- Hyperparameter Optimization
-- SHAP Explainability
-- Final Model Evaluation
-- Model Persistence
-- Reproducible Training Pipeline
-
----
-
-# Week 3 Progress
-
-| Day | Focus | Status |
-|------|-------|--------|
-| Day 1 | LightGBM + SMOTE | ✅ |
-| Day 2 | Hyperparameter Optimization | ✅ |
-| Day 3 | SHAP Explainability | ✅ |
-| Day 4 | Final Evaluation & Model Persistence | ✅ |
-
----
-
-# Final Pipeline
-
-```
-Dataset
-        │
-        ▼
-Feature Engineering
-        │
-        ▼
-Data Fusion
-        │
-        ▼
-SMOTE (Training Folds Only)
-        │
-        ▼
-LightGBM
-        │
-        ▼
-Optuna Hyperparameter Tuning
-        │
-        ▼
-SHAP Explainability
-        │
-        ▼
-Final Evaluation
-        │
-        ▼
-Saved Model + Metadata
-```
-
----
-
-# Week 3 Deliverables
-
-## Python Modules
-
-```
-src/
-
-lgbm_smote_pipeline.py
-
-hyperparameter_tuner.py
-
-optuna_tuner.py
-
-best_model_trainer.py
-
-shap_analyzer.py
-
-shap_visualizer.py
-
-final_model_pipeline.py
-
-model_saver.py
-```
-
----
-
-## Jupyter Notebooks
-
-```
-notebooks/
-
-week3_day1_lgbm_training.ipynb
-
-week3_day2_hyperparameter_tuning.ipynb
-
-week3_day3_shap_analysis.ipynb
-
-week3_day4_final_evaluation.ipynb
-```
-
----
-
-## Reports
-
-```
-docs/
-
-week3_completion_report.md
-
-src/
-
-model_metadata.json
-
-reproduction_guide.txt
-
-tuning_results/
-```
-
----
-
-# Techniques Used
-
-- LightGBM
-- SMOTE
-- Stratified 5-Fold Cross Validation
-- Grid Search
-- Optuna
-- SHAP Explainability
-- Model Evaluation
-- ROC-AUC
-- Precision–Recall Analysis
-- Confusion Matrix
-- Feature Importance
-- Model Serialization
-- Reproducible Machine Learning
-
----
-
-# Week 3 Outcomes
-
-- Successfully addressed class imbalance using SMOTE.
-- Tuned LightGBM using Grid Search and Optuna.
-- Built reusable training and evaluation pipelines.
-- Added explainability using SHAP.
-- Created reusable notebooks for experimentation.
-- Saved model metadata and reproduction guide.
-- Prepared the project for final optimization in Week 4.
-
----
-
-# Repository Structure
-
-```
-Predictive-Maintenance-IOT/
-
-src/
-models/
-docs/
-notebooks/
-data/
-```
-
----
-
-# Week 4 Roadmap
-
-The final week of the internship will focus on:
-
-- Noise Sensitivity Analysis
-- Threshold Optimization
-- Precision–Recall Optimization
-- Final Documentation
-- Repository Cleanup
-- Submission Preparation
-
----
-
-# Internship Progress
-
-| Week | Status |
-|------|--------|
-| Week 1 | ✅ Completed |
-| Week 2 | ✅ Completed |
-| Week 3 | ✅ Completed |
-| Week 4 | 🚀 In Progress |
-
----
----
-
-# Week 4 — Day 1: Noise Robustness Analysis ✅ COMPLETE
-
-## Overview
-
-The first day of Week 4 focused on evaluating the robustness of the trained LightGBM model under different synthetic sensor noise conditions. This analysis helps determine how well the model performs in realistic industrial IoT environments where sensors may produce noisy or unreliable readings.
-
----
-
-# Objectives
-
-- Inject synthetic noise into sensor features
-- Evaluate model robustness
-- Compare multiple noise types
-- Measure Macro F1 degradation
-- Visualize robustness curves
-- Prepare robustness report
-
----
-
-# Day 1 Progress
-
-| Commit | Task | Status |
-|---------|------|--------|
-| Commit 1 | Noise Injection Pipeline | ✅ |
-| Commit 2 | Robustness Testing | ✅ |
-| Commit 3 | Analysis Notebook | ✅ |
-| Commit 4 | Robustness Report | ✅ |
-| Commit 5 | README Update | ✅ |
-
----
-
-# Noise Types Evaluated
-
-- Gaussian Noise
-- Missing Values
-- Sensor Drift
-- Spike Noise
-- Scaling Noise
-
----
-
-# Robustness Evaluation Pipeline
-
-```text
-Original Dataset
-        │
-        ▼
-Feature Engineering
-        │
-        ▼
-Data Fusion
-        │
-        ▼
-Train Final LightGBM Model
-        │
-        ▼
-Inject Synthetic Noise
-        │
-        ▼
-Prediction
-        │
-        ▼
-Macro F1 Evaluation
-        │
-        ▼
-Performance Drop Analysis
-        │
-        ▼
-Robustness Report
-```
-
----
-
-# Deliverables
-
-## Python Modules
-
-```text
-src/
-
-noise_injector.py
-
-robustness_tester.py
-```
-
----
-
-## Notebook
-
-```text
-notebooks/
-
-week4_day1_noise_analysis.ipynb
-```
-
----
-
-## Documentation
-
-```text
-docs/
-
-robustness_report.md
-```
-
----
-
-## Generated Results
-
-```text
-src/tuning_results/
-
-robustness_curves.png
-
-robustness_results.csv
-
-robustness_summary.csv
-```
-
----
-
-# Techniques Used
-
-- Synthetic Noise Injection
-- Gaussian Noise Simulation
-- Missing Value Simulation
-- Sensor Drift Simulation
-- Spike Noise Simulation
-- Scaling Noise Simulation
-- Robustness Testing
-- Macro F1 Evaluation
-- Performance Degradation Analysis
-- Visualization using Matplotlib
-
----
-
-# Key Outcomes
-
-- Evaluated model robustness against multiple synthetic noise types.
-- Measured performance degradation across increasing noise levels.
-- Generated robustness curves for visual analysis.
-- Identified the relative impact of different noise patterns on prediction quality.
-- Established a reproducible robustness evaluation workflow.
-
----
-
-# Week 4 Progress
-
-| Day | Focus | Status |
-|-----|-------|--------|
-| Day 1 | Noise Robustness Analysis | ✅ |
-| Day 2 | Threshold Optimization | ⏳ |
-| Day 3 | Final Evaluation | ⏳ |
-| Day 4 | Documentation & Cleanup | ⏳ |
-
----
-
-## Current Project Status
-
-✅ Week 1 Completed
-
-✅ Week 2 Completed
-
-✅ Week 3 Completed
-
-🚀 Week 4 Day 1 Completed
-
-The project now includes preprocessing, feature engineering, data fusion, LightGBM training, SMOTE, hyperparameter optimization, SHAP explainability, model persistence, and robustness evaluation under synthetic noise.
-
-# 📈 Current Pipeline
-
-```text
-Raw Dataset
-      │
-      ▼
-Preprocessing
-      │
-      ▼
-Feature Engineering
-      │
-      ▼
-Context Data Fusion
-      │
-      ▼
-Feature Selection
-      │
-      ▼
-Pipeline Optimization
-      │
-      ▼
-Predictive Model
-```
-
----
-
-# 🚀 Running the Project
-
-Clone the repository:
-
-```bash
-git clone https://github.com/Ankursaini018/Predictive-Maintenance-IOT.git
-```
-
-Install dependencies:
-
+### 1. Setup
 ```bash
 pip install -r requirements.txt
 ```
 
-Run preprocessing:
+### 2. Download Dataset
+Place `ai4i2020.csv` in `data/` folder.
+[Download from UCI](https://archive.ics.uci.edu/dataset/601/ai4i+2020+predictive+maintenance+dataset)
 
+### 3. Validate Data
 ```bash
-python src/preprocessing.py
+cd src
+python data_validator.py
 ```
 
-Run feature selection:
-
+### 4. Run Tests
 ```bash
-python src/feature_selector.py
+python test_preprocessing.py
 ```
 
-Run optimization:
-
+### 5. Run Full Pipeline
 ```bash
-python src/pipeline_optimizer.py
+python project_summary.py
+```
+
+### 6. Generate Final Summary
+```bash
+python project_summary.py
 ```
 
 ---
 
----
+## 📊 GitHub Issues
 
-# ☑️ Current Status
-
-| Module | Status |
-|---------|--------|
-| Week 1 | ✅ Completed |
-| Week 2 | ✅ Completed |
-| Week 3 | ✅ Completed |
-| Week 4 Day 1 | ✅ Completed |
-| Week 4 Day 2 | ⏳ Upcoming |
-| Week 4 Day 3 | ⏳ Upcoming |
-| Week 4 Day 4 | ⏳ Upcoming |
-
----
-
-## ✅ Completed
-
-- **Week 1** – Data Exploration & Feature Engineering
-- **Week 2** – Context Simulation, Data Fusion & Pipeline Optimization
-- **Week 3** – LightGBM Model Development, SMOTE, Hyperparameter Tuning, SHAP Explainability & Final Model Pipeline
-- **Week 4 Day 1** – Noise Injection & Model Robustness Analysis
+| Issue | Title | Status |
+|---|---|---|
+| #1 | Ingest AI4I dataset | ✅ Closed |
+| #2 | Compute rolling means | ✅ Closed |
+| #3 | Simulate external context | ✅ Closed |
+| #4 | Merge IoT + external | ✅ Closed |
+| #5 | Ablation study | ✅ Closed |
+| #6 | SMOTE inside CV | ✅ Closed |
+| #7 | Train LightGBM | ✅ Closed |
+| #8 | Noise + PR curves | ✅ Closed |
+| #9 | Threshold tuning | ✅ Closed |
 
 ---
 
-## 🚀 Upcoming
+## 🛠️ Tech Stack
 
-- Decision Threshold Optimization
-- Precision–Recall Curve Analysis
-- Business Metric Optimization
-- Final Model Evaluation
-- Repository Cleanup
-- Documentation & Deployment Preparation
-
----
-
-# 📊 Overall Internship Progress
-
-| Week | Progress |
-|------|----------|
-| Week 1 | ✅ 100% |
-| Week 2 | ✅ 100% |
-| Week 3 | ✅ 100% |
-| Week 4 | 🟡 Day 1 Completed (25%) |
-
-**Overall Project Completion:** **~81%** 🚀
+| Category | Tools |
+|---|---|
+| Language | Python 3.10+ |
+| ML Model | LightGBM |
+| Imbalance | SMOTE (imbalanced-learn) |
+| Explainability | SHAP |
+| Tuning | Optuna |
+| Data | Pandas, NumPy, SciPy |
+| Visualization | Matplotlib, Seaborn |
+| Version Control | Git + GitHub |
 
 ---
 
-# 👨‍💻 Author
-
-**Ankur Saini**
-
-B.Tech Artificial Intelligence
-
-Infotact DS/ML Internship
-
----
-
-⭐ If you found this project useful, consider giving it a **Star** on GitHub.
-
+## 👤 Intern Details
+**Program:** Infotact DS/ML Technical Internship 2026
+**Project:** Project 1 — Contextual Predictive Maintenance
+**Mode:** Solo Worker
+**GitHub:** Ankursaini018
