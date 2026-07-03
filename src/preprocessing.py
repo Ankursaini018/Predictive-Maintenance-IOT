@@ -244,7 +244,7 @@ def load_and_preprocess(filepath: str):
     ).columns.tolist()
 
     print("=" * 50)
-    print("✅ Pipeline complete!")
+    print(" Pipeline complete!")
     print(f"X shape      : {X.shape}")
     print(f"y shape      : {y.shape}")
     print(f"Features     : {len(feature_names)}")

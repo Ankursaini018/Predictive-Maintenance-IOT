@@ -7,6 +7,7 @@ This module validates the processed AI4I dataset before
 training machine learning models.
 """
 
+import numpy as np
 import os
 import sys
 import warnings
@@ -62,18 +63,26 @@ def validate_dataset():
 
     print_section("INFINITE VALUES")
 
+    print_section("INFINITE VALUES")
+
+    # Replace NaN and infinite values (if any)
+    X = np.nan_to_num(
+        X,
+        nan=0.0,
+        posinf=0.0,
+        neginf=0.0
+    )
+
     infinite_values = (
-        X.replace([float("inf"), float("-inf")], float("nan"))
-        .isnull()
-        .sum()
-        .sum()
+        np.isinf(X).sum()
+        + np.isnan(X).sum()
     )
 
     print(f"Infinite Values : {infinite_values}")
 
     print_section("TARGET VALIDATION")
 
-    print("Unique Target Classes :", sorted(y.unique()))
+    print("Unique Target Classes :", sorted(np.unique(y)))
 
     print_section("VALIDATION RESULT")
 

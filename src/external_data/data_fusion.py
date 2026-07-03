@@ -51,7 +51,7 @@ def create_fused_dataset(
     """
 
     print("=" * 50)
-    print("🚀 CONTEXTUAL DATA FUSION")
+    print("CONTEXTUAL DATA FUSION")
     print("=" * 50)
 
     # Step 1 — Load IoT data
@@ -156,7 +156,7 @@ def create_fused_dataset(
         columns=['timestamp']
     )
 
-    print("\n✅ Fusion complete!")
+    print("\n Fusion complete!")
 
     print(
         f"Final Shape: "
@@ -216,7 +216,7 @@ if __name__ == "__main__":
     )
 
     print(
-        f"\n✅ Ready for modeling!"
+        f"\n Ready for modeling!"
     )
 
     print(

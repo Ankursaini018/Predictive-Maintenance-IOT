@@ -81,7 +81,7 @@ def test_rolling_features():
 
     assert len(roll_cols) == len(SENSOR_COLS) * 3
 
-    print("✅ test_rolling_features passed!")
+    print("[PASS] Test rolling features passed!")
 
 
 def test_domain_features():
@@ -93,7 +93,7 @@ def test_domain_features():
     assert "temp_delta" in df.columns
     assert "type_encoded" in df.columns
 
-    print("✅ test_domain_features passed!")
+    print(" test_domain_features passed!")
 
 
 def test_lag_features():
@@ -109,7 +109,7 @@ def test_lag_features():
 
     assert len(lag_cols) > 0
 
-    print("✅ test_lag_features passed!")
+    print(" test_lag_features passed!")
 
 
 def test_outlier_flags():
@@ -119,7 +119,7 @@ def test_outlier_flags():
 
     assert "total_anomaly_score" in df.columns
 
-    print("✅ test_outlier_flags passed!")
+    print(" test_outlier_flags passed!")
 
 
 def test_clean_dataframe():
@@ -135,7 +135,7 @@ def test_clean_dataframe():
 
     assert df.isnull().sum().sum() == 0
 
-    print("✅ test_clean_dataframe passed!")
+    print(" test_clean_dataframe passed!")
 
 
 if __name__ == "__main__":
@@ -151,5 +151,5 @@ if __name__ == "__main__":
     test_clean_dataframe()
 
     print("=" * 40)
-    print("✅ ALL TESTS PASSED!")
+    print("[PASS] ALL TESTS PASSED!")
     print("=" * 40)
