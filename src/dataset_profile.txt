@@ -1,0 +1,374 @@
+============================================================
+FUSED DATASET PROFILE REPORT
+============================================================
+
+Rows: 9991
+Columns: 58
+
+DATA TYPES
+----------------------------------------
+float64: 46
+int64: 7
+int32: 5
+
+MISSING VALUES
+----------------------------------------
+No missing values found.
+
+TARGET DISTRIBUTION
+----------------------------------------
+Class 0: 9652
+Class 1: 339
+
+Failure Rate: 3.39%
+
+NUMERICAL SUMMARY
+----------------------------------------
+
+Air temperature [K]
+Mean : 300.0066
+Std  : 2.0004
+Min  : 295.3000
+Max  : 304.5000
+
+Process temperature [K]
+Mean : 310.0068
+Std  : 1.4838
+Min  : 305.7000
+Max  : 313.8000
+
+Rotational speed [rpm]
+Mean : 1538.8135
+Std  : 179.3433
+Min  : 1168.0000
+Max  : 2886.0000
+
+Torque [Nm]
+Mean : 39.9858
+Std  : 9.9720
+Min  : 3.8000
+Max  : 76.6000
+
+Tool wear [min]
+Mean : 108.0399
+Std  : 63.6135
+Min  : 0.0000
+Max  : 253.0000
+
+Machine failure
+Mean : 0.0339
+Std  : 0.1811
+Min  : 0.0000
+Max  : 1.0000
+
+Air temperature [K]_roll_mean
+Mean : 300.0063
+Std  : 1.9992
+Min  : 295.4100
+Max  : 304.3900
+
+Air temperature [K]_roll_std
+Mean : 0.0759
+Std  : 0.0291
+Min  : 0.0000
+Max  : 0.2369
+
+Air temperature [K]_roll_var
+Mean : 0.0066
+Std  : 0.0055
+Min  : 0.0000
+Max  : 0.0561
+
+Process temperature [K]_roll_mean
+Mean : 310.0068
+Std  : 1.4807
+Min  : 305.8400
+Max  : 313.6500
+
+Process temperature [K]_roll_std
+Mean : 0.0935
+Std  : 0.0362
+Min  : 0.0000
+Max  : 0.2974
+
+Process temperature [K]_roll_var
+Mean : 0.0100
+Std  : 0.0085
+Min  : 0.0000
+Max  : 0.0884
+
+Rotational speed [rpm]_roll_mean
+Mean : 1538.8004
+Std  : 57.7064
+Min  : 1364.3000
+Max  : 1829.1000
+
+Rotational speed [rpm]_roll_std
+Mean : 164.4762
+Std  : 70.5810
+Min  : 30.9451
+Max  : 536.1312
+
+Rotational speed [rpm]_roll_var
+Mean : 32033.6054
+Std  : 31381.8571
+Min  : 957.6000
+Max  : 287436.7111
+
+Torque [Nm]_roll_mean
+Mean : 39.9867
+Std  : 3.1780
+Min  : 28.4300
+Max  : 50.9600
+
+Torque [Nm]_roll_std
+Mean : 9.6786
+Std  : 2.3602
+Min  : 2.9251
+Max  : 19.5197
+
+Torque [Nm]_roll_var
+Mean : 99.2458
+Std  : 47.8988
+Min  : 8.5560
+Max  : 381.0179
+
+Tool wear [min]_roll_mean
+Mean : 108.0365
+Std  : 56.2466
+Min  : 9.0000
+Max  : 240.7000
+
+Tool wear [min]_roll_std
+Mean : 16.8610
+Std  : 26.4099
+Min  : 6.0553
+Max  : 127.5203
+
+Tool wear [min]_roll_var
+Mean : 981.7072
+Std  : 2814.0093
+Min  : 36.6667
+Max  : 16261.4333
+
+temp_delta
+Mean : 10.0002
+Std  : 1.0014
+Min  : 7.6000
+Max  : 12.1000
+
+power
+Mean : 59965.7836
+Std  : 10195.3268
+Min  : 10966.8000
+Max  : 99980.4000
+
+tool_wear_rate
+Mean : 0.0710
+Std  : 0.0426
+Min  : 0.0000
+Max  : 0.1853
+
+torque_per_rpm
+Mean : 0.0269
+Std  : 0.0088
+Min  : 0.0013
+Max  : 0.0638
+
+temp_wear_interaction
+Mean : 33494.2671
+Std  : 19724.3157
+Min  : 0.0000
+Max  : 79011.9000
+
+type_encoded
+Mean : 0.5005
+Std  : 0.6714
+Min  : 0.0000
+Max  : 2.0000
+
+Torque [Nm]_lag1
+Mean : 39.9846
+Std  : 9.9727
+Min  : 3.8000
+Max  : 76.6000
+
+Torque [Nm]_lag2
+Mean : 39.9838
+Std  : 9.9723
+Min  : 3.8000
+Max  : 76.6000
+
+Torque [Nm]_lag3
+Mean : 39.9847
+Std  : 9.9721
+Min  : 3.8000
+Max  : 76.6000
+
+Tool wear [min]_lag1
+Mean : 108.0387
+Std  : 63.6151
+Min  : 0.0000
+Max  : 253.0000
+
+Tool wear [min]_lag2
+Mean : 108.0378
+Std  : 63.6164
+Min  : 0.0000
+Max  : 253.0000
+
+Tool wear [min]_lag3
+Mean : 108.0370
+Std  : 63.6175
+Min  : 0.0000
+Max  : 253.0000
+
+Rotational speed [rpm]_lag1
+Mean : 1538.8302
+Std  : 179.3475
+Min  : 1168.0000
+Max  : 2886.0000
+
+Rotational speed [rpm]_lag2
+Mean : 1538.8422
+Std  : 179.3427
+Min  : 1168.0000
+Max  : 2886.0000
+
+Rotational speed [rpm]_lag3
+Mean : 1538.8335
+Std  : 179.3397
+Min  : 1168.0000
+Max  : 2886.0000
+
+power_lag1
+Mean : 59964.5201
+Std  : 10196.0676
+Min  : 10966.8000
+Max  : 99980.4000
+
+power_lag2
+Mean : 59963.8292
+Std  : 10195.7374
+Min  : 10966.8000
+Max  : 99980.4000
+
+power_lag3
+Mean : 59964.9418
+Std  : 10195.7960
+Min  : 10966.8000
+Max  : 99980.4000
+
+Torque [Nm]_roc
+Mean : 0.0012
+Std  : 14.0655
+Min  : -50.5000
+Max  : 52.2000
+
+Torque [Nm]_roc_abs
+Mean : 11.1457
+Std  : 8.5789
+Min  : 0.0000
+Max  : 52.2000
+
+Tool wear [min]_roc
+Mean : 0.0012
+Std  : 23.7239
+Min  : -253.0000
+Max  : 5.0000
+
+Tool wear [min]_roc_abs
+Mean : 5.1384
+Std  : 23.1607
+Min  : 2.0000
+Max  : 253.0000
+
+power_roc
+Mean : 1.2635
+Std  : 14409.2468
+Min  : -56895.0000
+Max  : 62766.1000
+
+power_roc_abs
+Mean : 11390.9119
+Std  : 8823.8615
+Min  : 0.1000
+Max  : 62766.1000
+
+Air temperature [K]_outlier_flag
+Mean : 0.0000
+Std  : 0.0000
+Min  : 0.0000
+Max  : 0.0000
+
+Process temperature [K]_outlier_flag
+Mean : 0.0000
+Std  : 0.0000
+Min  : 0.0000
+Max  : 0.0000
+
+Rotational speed [rpm]_outlier_flag
+Mean : 0.0164
+Std  : 0.1271
+Min  : 0.0000
+Max  : 1.0000
+
+Torque [Nm]_outlier_flag
+Mean : 0.0025
+Std  : 0.0500
+Min  : 0.0000
+Max  : 1.0000
+
+Tool wear [min]_outlier_flag
+Mean : 0.0000
+Std  : 0.0000
+Min  : 0.0000
+Max  : 0.0000
+
+total_anomaly_score
+Mean : 0.0189
+Std  : 0.1441
+Min  : 0.0000
+Max  : 2.0000
+
+ambient_temp_c
+Mean : 19.7460
+Std  : 3.7385
+Min  : 9.5200
+Max  : 30.4600
+
+humidity_pct
+Mean : 60.0787
+Std  : 6.3784
+Min  : 36.0300
+Max  : 86.0500
+
+wind_speed_kmh
+Mean : 11.9427
+Std  : 2.8688
+Min  : 0.8600
+Max  : 22.2300
+
+air_pressure_hpa
+Mean : 1012.9288
+Std  : 8.0402
+Min  : 977.2800
+Max  : 1042.8200
+
+weather_encoded
+Mean : 0.4586
+Std  : 1.2015
+Min  : 0.0000
+Max  : 4.0000
+
+factory_load
+Mean : 0.7492
+Std  : 0.1666
+Min  : 0.3000
+Max  : 1.2000
+
+load_encoded
+Mean : 1.0859
+Std  : 0.7071
+Min  : 0.0000
+Max  : 2.0000

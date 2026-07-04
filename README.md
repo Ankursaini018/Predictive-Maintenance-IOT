@@ -1,11 +1,13 @@
 # 🔧 Predictive Maintenance IoT
+
 ## Infotact DS/ML Technical Internship 2026
 
-![Progress](https://img.shields.io/badge/Status-Complete-brightgreen)
-![Week](https://img.shields.io/badge/Week-4%20of%204-blue)
-![Issues](https://img.shields.io/badge/Issues-9%2F9%20Closed-green)
-![Model](https://img.shields.io/badge/Model-LightGBM-orange)
+![Status](https://img.shields.io/badge/Status-Complete-brightgreen)
+![Week](https://img.shields.io/badge/Week-4%2F4%20Complete-blue)
+![Issues](https://img.shields.io/badge/Issues-Closed-green)
+![Model](https://img.shields.io/badge/Model-LightGBM%20%2B%20SMOTE-orange)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-yellow)
+![Review](https://img.shields.io/badge/Final%20Review-Ready-brightgreen)
 
 ---
 

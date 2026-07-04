@@ -1,0 +1,25 @@
+Torque [Nm]
+Rotational speed [rpm]
+temp_delta
+Torque [Nm]_roc
+Tool wear [min]_roll_mean
+Tool wear [min]
+Air temperature [K]
+Torque [Nm]_lag1
+Tool wear [min]_lag1
+power_roc_abs
+Rotational speed [rpm]_lag1
+Process temperature [K]
+Tool wear [min]_lag2
+Torque [Nm]_roc_abs
+Rotational speed [rpm]_roll_std
+Torque [Nm]_roll_std
+Tool wear [min]_roll_std
+humidity_pct
+Tool wear [min]_lag3
+Torque [Nm]_roll_mean
+wind_speed_kmh
+Torque [Nm]_lag2
+air_pressure_hpa
+ambient_temp_c
+factory_load

@@ -1,0 +1,44 @@
+
+MODEL EVALUATION REPORT
+==================================================
+
+Project
+-------
+Contextual Predictive Maintenance (IoT Edge AI)
+
+Internship
+----------
+Infotact DS/ML Internship
+
+Week
+----
+Week 3 - Model Evaluation
+
+==================================================
+
+PERFORMANCE METRICS
+
+Macro F1 Score : 0.9150
+F1 Std Dev     : 0.0173
+ROC AUC        : 0.9775
+Precision      : 0.9403
+Recall         : 0.8935
+
+==================================================
+
+MODEL CONFIGURATION
+
+Classifier      : LightGBM
+Validation       : Stratified 5-Fold CV
+Oversampling     : SMOTE (Inside Training Fold)
+Samples          : 9991
+Features         : 57
+
+==================================================
+
+TARGET PERFORMANCE
+
+Required F1 Score : 0.85
+Achieved          : YES
+
+==================================================

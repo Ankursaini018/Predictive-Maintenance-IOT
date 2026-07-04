@@ -1,0 +1,40 @@
+FEATURE VALIDATION REPORT
+==================================================
+
+Samples : 9991
+Features: 25
+Failures: 339
+
+shape_check: PASS
+missing_values: PASS
+infinite_values: PASS
+target_check: PASS
+feature_count: PASS
+
+Selected Features
+------------------------------
+Torque [Nm]
+Rotational speed [rpm]
+temp_delta
+Torque [Nm]_roc
+Tool wear [min]
+Tool wear [min]_roll_mean
+Air temperature [K]
+Torque [Nm]_lag1
+power_roc_abs
+Tool wear [min]_lag1
+Process temperature [K]
+Rotational speed [rpm]_lag1
+Tool wear [min]_lag2
+Rotational speed [rpm]_roll_std
+Torque [Nm]_roll_mean
+Tool wear [min]_lag3
+Torque [Nm]_roll_std
+Tool wear [min]_roll_std
+humidity_pct
+Torque [Nm]_roc_abs
+Rotational speed [rpm]_roll_mean
+factory_load
+air_pressure_hpa
+Torque [Nm]_lag2
+wind_speed_kmh
