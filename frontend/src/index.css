@@ -150,5 +150,32 @@ body {
 .gauge-track { stroke: rgba(255,255,255,0.06); }
 .gauge-fill  { transition: stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1); }
 
-/* ─── Number counter ────────────────────────── */
+/* ─── Number counter ────────────────────────────── */
 .mono { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; }
+
+/* ─── Custom range slider ───────────────────────── */
+input[type='range'] { -webkit-appearance: none; height: 20px; width: 100%; }
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--thumb-color, #00d4ff);
+  border: 2px solid rgba(255,255,255,0.3);
+  box-shadow: 0 0 6px var(--thumb-color, #00d4ff);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+input[type='range']::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 12px var(--thumb-color, #00d4ff);
+}
+input[type='range']::-webkit-slider-runnable-track { height: 6px; border-radius: 99px; background: transparent; }
+input[type='range']:focus { outline: none; }
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button { opacity: 0.4; }
+
+/* ─── @keyframes spin (for loading) ─────────────── */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
