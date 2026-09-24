@@ -4,23 +4,23 @@ import { useState, useEffect } from 'react'
 import { useToast } from './Toast'
 
 const routeTitles = {
-  '/dashboard':         { title: 'Dashboard',        sub: 'System Overview' },
-  '/live-sensors':      { title: 'Live Sensors',      sub: 'Real-time monitoring' },
-  '/predictions':       { title: 'Predictions',       sub: 'Failure risk assessment' },
-  '/feature-analysis':  { title: 'Feature Analysis',  sub: 'SHAP importance breakdown' },
-  '/model-performance': { title: 'Model Performance', sub: 'LightGBM evaluation metrics' },
+  '/dashboard':   { title: 'Dashboard',        sub: 'System Overview' },
+  '/sensors':     { title: 'Live Sensors',      sub: 'Real-time monitoring' },
+  '/predictions': { title: 'Predictions',       sub: 'Failure risk assessment' },
+  '/shap':        { title: 'Feature Analysis',  sub: 'SHAP importance breakdown' },
+  '/performance': { title: 'Model Performance', sub: 'LightGBM evaluation metrics' },
 }
 
 const QUICK_ALERTS = [
-  { type: 'error',   title: 'Critical Alert',       message: 'Machine M-7823 — Failure probability 97%' },
-  { type: 'warning', title: 'Tool Wear Warning',    message: 'Machine H-5502 — Replace tool within 2h' },
-  { type: 'success', title: 'Model Sync Complete',  message: 'Batch inference on 247 machines finished' },
-  { type: 'info',    title: 'Sensor Data Updated',  message: 'Live stream reconnected — L-001 to L-010' },
+  { type: 'error',   title: 'Critical Alert',      message: 'Machine M-7823 — Failure probability 97%' },
+  { type: 'warning', title: 'Tool Wear Warning',   message: 'Machine H-5502 — Replace tool within 2h' },
+  { type: 'success', title: 'Model Sync Complete', message: 'Batch inference on 247 machines finished' },
+  { type: 'info',    title: 'Sensor Data Updated', message: 'Live stream reconnected — L-001 to L-010' },
 ]
 
 export default function Header() {
   const { pathname } = useLocation()
-  const meta = routeTitles[pathname] || { title: 'PredictIQ', sub: '' }
+  const meta = routeTitles[pathname] || { title: 'PredictIQ', sub: 'Predictive Maintenance' }
   const [time, setTime] = useState(new Date())
   const [bellBounce, setBellBounce] = useState(false)
   const [alertCount, setAlertCount] = useState(3)
@@ -31,7 +31,6 @@ export default function Header() {
     return () => clearInterval(t)
   }, [])
 
-  /* Bell animates every 12s to signal new alert */
   useEffect(() => {
     const iv = setInterval(() => {
       setBellBounce(true)
@@ -40,14 +39,13 @@ export default function Header() {
     return () => clearInterval(iv)
   }, [])
 
-  const fmt = (d) =>
+  const fmt = d =>
     d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })
-  const fmtDate = (d) =>
+  const fmtDate = d =>
     d.toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' })
 
   const handleBell = () => {
-    const alert = QUICK_ALERTS[Math.floor(Math.random() * QUICK_ALERTS.length)]
-    addToast(alert)
+    addToast(QUICK_ALERTS[Math.floor(Math.random() * QUICK_ALERTS.length)])
     setAlertCount(c => Math.max(0, c - 1))
   }
 
@@ -55,7 +53,7 @@ export default function Header() {
     <header
       className="flex items-center justify-between px-6 py-3.5 shrink-0 border-b"
       style={{
-        background: 'rgba(10,15,30,0.8)',
+        background: 'rgba(10,15,30,0.85)',
         borderColor: 'rgba(255,255,255,0.06)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
@@ -70,7 +68,6 @@ export default function Header() {
 
       {/* Right cluster */}
       <div className="flex items-center gap-4">
-        {/* System status */}
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5">
             <span className="status-dot live" />
@@ -100,12 +97,12 @@ export default function Header() {
               {t}
             </span>
           ))}
-          <span className="text-xs ml-1" style={{ color: '#8892a4' }}>Types</span>
+          <span className="text-xs ml-0.5" style={{ color: '#8892a4' }}>Types</span>
         </div>
 
         <div className="h-3.5 w-px" style={{ background: 'rgba(255,255,255,0.1)' }} />
 
-        {/* Bell / alert button */}
+        {/* Bell */}
         <button
           onClick={handleBell}
           className="relative flex items-center justify-center w-8 h-8 rounded-lg transition-all"

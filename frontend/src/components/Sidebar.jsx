@@ -7,15 +7,14 @@ import {
 } from 'lucide-react'
 
 const NAV_ITEMS = [
-  { to: '/dashboard',         icon: LayoutDashboard, label: 'Dashboard',         color: '#00d4ff' },
-  { to: '/live-sensors',      icon: Activity,        label: 'Live Sensors',       color: '#00ff88' },
-  { to: '/predictions',       icon: BrainCircuit,    label: 'Predictions',        color: '#c084fc' },
-  { to: '/feature-analysis',  icon: BarChart3,       label: 'Feature Analysis',   color: '#ffb300' },
-  { to: '/model-performance', icon: TrendingUp,      label: 'Model Performance',  color: '#fbbf24' },
+  { to: '/dashboard',   icon: LayoutDashboard, label: 'Dashboard',        color: '#00d4ff' },
+  { to: '/sensors',     icon: Activity,        label: 'Live Sensors',     color: '#00ff88' },
+  { to: '/predictions', icon: BrainCircuit,    label: 'Predictions',      color: '#c084fc' },
+  { to: '/shap',        icon: BarChart3,       label: 'Feature Analysis', color: '#ffb300' },
+  { to: '/performance', icon: TrendingUp,      label: 'Model Performance',color: '#fbbf24' },
 ]
 
 export default function Sidebar() {
-  /* auto-collapse on small screens */
   const [collapsed, setCollapsed] = useState(window.innerWidth < 1025)
 
   useEffect(() => {
@@ -28,7 +27,7 @@ export default function Sidebar() {
 
   return (
     <aside
-      className="sidebar flex flex-col h-full border-r shrink-0 relative"
+      className="sidebar flex flex-col h-full border-r shrink-0"
       style={{
         width: W,
         transition: 'width 0.3s cubic-bezier(0.4,0,0.2,1)',
@@ -64,7 +63,7 @@ export default function Sidebar() {
       <nav className="flex-1 px-2 py-4 space-y-0.5 overflow-hidden">
         {!collapsed && (
           <p className="px-3 mb-2 text-[10px] uppercase tracking-widest whitespace-nowrap"
-            style={{ color: '#8892a4', animation: 'fadeUp 0.3s ease' }}>
+            style={{ color: '#8892a4' }}>
             Navigation
           </p>
         )}
@@ -83,10 +82,8 @@ export default function Sidebar() {
           >
             {({ isActive }) => (
               <>
-                <div
-                  className="shrink-0 flex items-center justify-center w-5 h-5"
-                  style={{ color: isActive ? color : undefined }}
-                >
+                <div className="shrink-0 flex items-center justify-center w-5 h-5"
+                  style={{ color: isActive ? color : undefined }}>
                   <Icon size={16} />
                 </div>
                 {!collapsed && (
@@ -98,12 +95,9 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* ── Bottom ── */}
+      {/* ── Bottom utilities ── */}
       <div className="px-2 pb-3 border-t pt-3" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-        {[
-          { icon: Settings,   label: 'Settings' },
-          { icon: HelpCircle, label: 'Help' },
-        ].map(({ icon: Icon, label }) => (
+        {[{ icon: Settings, label: 'Settings' }, { icon: HelpCircle, label: 'Help' }].map(({ icon: Icon, label }) => (
           <button
             key={label}
             title={collapsed ? label : undefined}
@@ -115,7 +109,6 @@ export default function Sidebar() {
           </button>
         ))}
 
-        {/* Model badge */}
         {!collapsed && (
           <div className="sidebar-badge mt-2 mx-1 px-3 py-2 rounded-lg"
             style={{ background: 'rgba(0,212,255,0.06)', border: '1px solid rgba(0,212,255,0.15)' }}>
@@ -124,21 +117,15 @@ export default function Sidebar() {
           </div>
         )}
 
-        {/* Collapse toggle */}
         <button
           onClick={() => setCollapsed(c => !c)}
           className="mt-2 flex items-center justify-center w-full py-2 rounded-xl transition-all text-xs gap-1.5"
-          style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.07)',
-            color: '#8892a4',
-          }}
+          style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', color: '#8892a4' }}
           title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           {collapsed
             ? <ChevronRight size={14} />
-            : <><ChevronLeft size={14} /><span>Collapse</span></>
-          }
+            : <><ChevronLeft size={14} /><span>Collapse</span></>}
         </button>
       </div>
     </aside>

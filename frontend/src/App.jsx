@@ -2,14 +2,16 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { useEffect, useRef } from 'react'
 import Sidebar from './components/Sidebar'
 import Header from './components/Header'
+import Breadcrumb from './components/Breadcrumb'
 import { ToastProvider } from './components/Toast'
 import Dashboard from './pages/Dashboard'
 import LiveSensors from './pages/LiveSensors'
 import Predictions from './pages/Predictions'
 import FeatureAnalysis from './pages/FeatureAnalysis'
 import ModelPerformance from './pages/ModelPerformance'
+import NotFound from './pages/NotFound'
 
-/* Re-trigger page-enter on route change */
+/* Re-trigger page-enter animation on every route change */
 function AnimatedRoutes() {
   const { pathname } = useLocation()
   const mainRef = useRef(null)
@@ -18,8 +20,7 @@ function AnimatedRoutes() {
     const el = mainRef.current
     if (!el) return
     el.style.animation = 'none'
-    // Force reflow
-    void el.offsetHeight
+    void el.offsetHeight          // force reflow
     el.style.animation = ''
   }, [pathname])
 
@@ -29,13 +30,25 @@ function AnimatedRoutes() {
       className="flex-1 overflow-y-auto p-5 page-enter"
       style={{ scrollbarGutter: 'stable' }}
     >
+      {/* Breadcrumb injected globally — shows on all non-home pages */}
+      <Breadcrumb />
+
       <Routes>
-        <Route path="/"                element={<Navigate to="/dashboard" replace />} />
-        <Route path="/dashboard"       element={<Dashboard />} />
-        <Route path="/live-sensors"    element={<LiveSensors />} />
-        <Route path="/predictions"     element={<Predictions />} />
-        <Route path="/feature-analysis" element={<FeatureAnalysis />} />
-        <Route path="/model-performance" element={<ModelPerformance />} />
+        {/* ── Primary routes ── */}
+        <Route path="/"            element={<Navigate to="/dashboard" replace />} />
+        <Route path="/dashboard"   element={<Dashboard />} />
+        <Route path="/sensors"     element={<LiveSensors />} />
+        <Route path="/predictions" element={<Predictions />} />
+        <Route path="/shap"        element={<FeatureAnalysis />} />
+        <Route path="/performance" element={<ModelPerformance />} />
+
+        {/* ── Legacy redirects (old URLs → new) ── */}
+        <Route path="/live-sensors"      element={<Navigate to="/sensors"     replace />} />
+        <Route path="/feature-analysis"  element={<Navigate to="/shap"        replace />} />
+        <Route path="/model-performance" element={<Navigate to="/performance"  replace />} />
+
+        {/* ── 404 ── */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </main>
   )
