@@ -10,43 +10,59 @@ import {
 } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
 
+import {
+  SENSOR_RANGES,
+  clamp,
+  INITIAL_MACHINES,
+  generateRecentPredictions,
+} from '../data/mockData'
+
 /* ════════════════════════════════════════════════
    CONSTANTS & DATA
    ════════════════════════════════════════════════ */
 const SENSOR_FIELDS = [
-  { key: 'airTemp',  label: 'Air Temperature',     unit: 'K',   min: 295, max: 308, step: 0.1, icon: Thermometer, color: '#00d4ff', def: 300.5 },
-  { key: 'procTemp', label: 'Process Temperature', unit: 'K',   min: 305, max: 316, step: 0.1, icon: Wind,        color: '#c084fc', def: 310.8 },
-  { key: 'rpm',      label: 'Rotational Speed',    unit: 'RPM', min: 1000, max: 3000, step: 10, icon: Gauge,      color: '#00ff88', def: 1500  },
-  { key: 'torque',   label: 'Torque',              unit: 'Nm',  min: 0,   max: 80,  step: 0.5, icon: Zap,        color: '#ffb300', def: 40.0  },
-  { key: 'toolWear', label: 'Tool Wear',           unit: 'min', min: 0,   max: 250, step: 1,   icon: Wrench,     color: '#ff4444', def: 80    },
+  { key: 'airTemp',  label: 'Air Temperature',     unit: 'K',   min: 295,  max: 305,  step: 0.1, icon: Thermometer, color: '#00d4ff', def: 299.8 },
+  { key: 'procTemp', label: 'Process Temperature', unit: 'K',   min: 308,  max: 313,  step: 0.1, icon: Wind,        color: '#c084fc', def: 310.4 },
+  { key: 'rpm',      label: 'Rotational Speed',    unit: 'RPM', min: 1200, max: 2800, step: 10,  icon: Gauge,       color: '#00ff88', def: 1750  },
+  { key: 'torque',   label: 'Torque',              unit: 'Nm',  min: 35,   max: 65,   step: 0.5, icon: Zap,         color: '#ffb300', def: 48.0  },
+  { key: 'toolWear', label: 'Tool Wear',           unit: 'min', min: 0,    max: 200,  step: 1,   icon: Wrench,      color: '#ff4444', def: 85    },
 ]
 
-const MACHINE_TYPES = ['L', 'M', 'H']
+const MACHINES_LIST = INITIAL_MACHINES
 
-/* ── SHAP feature importance (simulated) ──────── */
+/* ── SHAP feature importance (Tool Wear 0.42, Torque 0.31, Factory Load 0.18) ── */
 function computeShap(inputs) {
+  const wearImpact   = +(0.42 * (inputs.toolWear / 150 - 0.45)).toFixed(3)
+  const torqueImpact = +(0.31 * (inputs.torque / 50 - 0.95)).toFixed(3)
+  const loadImpact   = +(0.18 * ((inputs.machineType === 'H' ? 1.15 : inputs.machineType === 'M' ? 0.95 : 0.8) - 0.9)).toFixed(3)
+  const powerImpact  = +(0.12 * ((inputs.torque * inputs.rpm / 85000) - 1.0)).toFixed(3)
+  const deltaImpact  = +(0.09 * (((inputs.procTemp - inputs.airTemp) / 10.6) - 1.0)).toFixed(3)
+
   return [
-    { feature: 'power (torque×rpm)', impact: +((inputs.torque * inputs.rpm / 45000 - 1) * 0.19).toFixed(3) },
-    { feature: 'tool_wear_rate',      impact: +((inputs.toolWear / 250 - 0.3) * 0.15).toFixed(3) },
-    { feature: 'torque_per_rpm',      impact: +((inputs.torque / (inputs.rpm / 100) - 2.5) * 0.1).toFixed(3) },
-    { feature: 'temp_delta',          impact: +(((inputs.procTemp - inputs.airTemp) / 12 - 0.8) * 0.09).toFixed(3) },
-    { feature: 'Tool wear [min]',     impact: +((inputs.toolWear / 200 - 0.4) * 0.12).toFixed(3) },
+    { feature: 'Tool Wear [min]',        impact: wearImpact,   baseWeight: 0.42 },
+    { feature: 'Torque [Nm]',            impact: torqueImpact, baseWeight: 0.31 },
+    { feature: 'Factory Load',           impact: loadImpact,   baseWeight: 0.18 },
+    { feature: 'Power (Torque × Speed)', impact: powerImpact,  baseWeight: 0.12 },
+    { feature: 'Temp Delta (ΔT)',        impact: deltaImpact,  baseWeight: 0.09 },
   ].sort((a, b) => Math.abs(b.impact) - Math.abs(a.impact))
 }
 
 /* ── Simulate model output ─────────────────────── */
 function simulateModel(inputs) {
-  const power     = (inputs.torque * inputs.rpm) / 45000
-  const wearPct   = inputs.toolWear / 250
-  const delta     = inputs.procTemp - inputs.airTemp
-  const rawScore  =
-    0.22 * Math.min(power / 3, 1)
-    + 0.25 * wearPct
-    + 0.18 * Math.max(0, (delta - 8) / 6)
-    + 0.15 * Math.max(0, (inputs.torque - 50) / 30)
-    + 0.12 * Math.max(0, (inputs.rpm - 2000) / 1000)
-    + (inputs.machineType === 'H' ? 0.06 : inputs.machineType === 'M' ? 0.02 : -0.02)
-  return Math.min(0.99, Math.max(0.02, rawScore + (Math.random() - 0.5) * 0.04))
+  const wearScore = inputs.toolWear / 200
+  const torqueScore = (inputs.torque - 35) / 30
+  const power = (inputs.torque * inputs.rpm) / 95000
+  const tempDelta = (inputs.procTemp - inputs.airTemp) - 10.0
+  const typeBonus = inputs.machineType === 'H' ? 0.08 : inputs.machineType === 'M' ? 0.03 : -0.04
+
+  const rawScore =
+    0.42 * wearScore +
+    0.31 * torqueScore +
+    0.18 * (power > 1 ? 0.6 : 0.2) +
+    0.09 * Math.max(0, tempDelta / 3) +
+    typeBonus
+
+  return Math.min(0.98, Math.max(0.04, +(rawScore + (Math.random() - 0.5) * 0.03).toFixed(2)))
 }
 
 function probLabel(p) {
@@ -64,19 +80,17 @@ function actionText(p) {
 }
 
 const INITIAL_INPUTS = {
-  airTemp: 300.5, procTemp: 310.8, rpm: 1500, torque: 40.0, toolWear: 80, machineType: 'M',
+  machineId: 'M-003',
+  machineType: 'M',
+  airTemp: 302.2,
+  procTemp: 311.9,
+  rpm: 2180,
+  torque: 56.4,
+  toolWear: 154,
 }
 
-/* ── History seed ───────────────────────────────── */
-const SEED_HISTORY = [
-  { time: '19:54:12', prob: 0.92, result: 'Failure', known: true  },
-  { time: '19:48:07', prob: 0.67, result: 'Warning', known: true  },
-  { time: '19:41:30', prob: 0.23, result: 'Normal',  known: true  },
-  { time: '19:35:59', prob: 0.78, result: 'Failure', known: true  },
-  { time: '19:29:14', prob: 0.41, result: 'Warning', known: true  },
-  { time: '19:22:08', prob: 0.11, result: 'Normal',  known: true  },
-  { time: '19:15:33', prob: 0.85, result: 'Failure', known: true  },
-]
+/* ── 10 Recent Predictions ───────────────────────── */
+const SEED_HISTORY = generateRecentPredictions()
 
 /* ════════════════════════════════════════════════
    SVG PROBABILITY GAUGE
@@ -274,7 +288,7 @@ const ShapTooltip = ({ active, payload }) => {
 function HistoryRow({ item, idx }) {
   const meta = probLabel(item.prob)
   const [show, setShow] = useState(false)
-  useEffect(() => { const t = setTimeout(() => setShow(true), idx * 60); return () => clearTimeout(t) }, [idx])
+  useEffect(() => { const t = setTimeout(() => setShow(true), idx * 40); return () => clearTimeout(t) }, [idx])
 
   return (
     <div className="flex items-center gap-4 transition-all"
@@ -283,14 +297,21 @@ function HistoryRow({ item, idx }) {
       <div className="flex flex-col items-center gap-0" style={{ minWidth: 16 }}>
         <div className="w-3 h-3 rounded-full shrink-0"
           style={{ background: meta.color, boxShadow: `0 0 6px ${meta.color}80`, animation: item.prob >= 0.7 ? 'livePulse 2s infinite' : undefined }} />
-        {idx < SEED_HISTORY.length - 1 && <div className="w-px flex-1 mt-1" style={{ background: 'rgba(255,255,255,0.08)', height: 24 }} />}
+        {idx < 9 && <div className="w-px flex-1 mt-1" style={{ background: 'rgba(255,255,255,0.08)', height: 28 }} />}
       </div>
 
       {/* Content */}
-      <div className="flex-1 flex items-center justify-between px-4 py-2.5 rounded-xl mb-2"
+      <div className="flex-1 flex items-center justify-between px-4 py-2.5 rounded-xl mb-2 flex-wrap gap-2"
         style={{ background: `${meta.color}08`, border: `1px solid ${meta.color}20` }}>
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5" style={{ color: '#8892a4', minWidth: 72 }}>
+          {/* Machine Badge */}
+          {item.id && (
+            <span className="text-xs font-bold mono px-2 py-0.5 rounded-md"
+              style={{ background: 'rgba(255,255,255,0.08)', color: '#fff', border: '1px solid rgba(255,255,255,0.12)' }}>
+              {item.id}
+            </span>
+          )}
+          <div className="flex items-center gap-1.5" style={{ color: '#8892a4', minWidth: 68 }}>
             <Clock size={10} />
             <span className="text-[11px] mono">{item.time}</span>
           </div>
@@ -302,25 +323,29 @@ function HistoryRow({ item, idx }) {
             {meta.text}
           </span>
         </div>
-        {item.known && (
-          <div className="flex items-center gap-1.5 text-[11px]" style={{ color: '#8892a4' }}>
-            {item.result === 'Failure'
-              ? <><XCircle size={12} color="#ff4444" /><span style={{ color: '#ff4444' }}>Failure confirmed</span></>
-              : item.result === 'Warning'
-              ? <><AlertTriangle size={12} color="#ffb300" /><span style={{ color: '#ffb300' }}>Anomaly detected</span></>
-              : <><CheckCircle size={12} color="#00ff88" /><span style={{ color: '#00ff88' }}>Normal confirmed</span></>
-            }
-          </div>
-        )}
+
+        {/* Failure type / action snippet */}
+        <div className="flex items-center gap-2 text-[11px]" style={{ color: '#8892a4' }}>
+          {item.failureType && (
+            <span className="text-xs font-medium" style={{ color: meta.color }}>
+              {item.failureType}
+            </span>
+          )}
+          {item.action && (
+            <span className="hidden md:inline text-xs" style={{ color: '#8892a4' }}>
+              · {item.action}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   )
 }
 
 /* ════════════════════════════════════════════════
-   MACHINE TYPE DROPDOWN
+   MACHINE SELECTOR DROPDOWN (6 MACHINES)
    ════════════════════════════════════════════════ */
-function MachineDropdown({ value, onChange }) {
+function MachineDropdown({ selectedId, onSelect }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
   useEffect(() => {
@@ -328,23 +353,32 @@ function MachineDropdown({ value, onChange }) {
     document.addEventListener('mousedown', fn); return () => document.removeEventListener('mousedown', fn)
   }, [])
 
+  const selectedMachine = MACHINES_LIST.find(m => m.id === selectedId) || MACHINES_LIST[0]
+
   return (
     <div className="relative" ref={ref}>
       <button onClick={() => setOpen(o => !o)}
         className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium"
         style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#c8d3e0' }}>
-        <span>Machine Type: <span className="font-bold" style={{ color: '#00d4ff' }}>Type {value}</span></span>
+        <span>Selected Machine: <span className="font-bold mono text-white">{selectedMachine.id}</span> ({selectedMachine.name})</span>
         <ChevronDown size={12} color="#8892a4" style={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'transform 0.2s' }} />
       </button>
       {open && (
-        <div className="absolute top-full mt-1 left-0 right-0 z-50 glass rounded-xl overflow-hidden">
-          {MACHINE_TYPES.map(t => (
-            <button key={t} onClick={() => { onChange(t); setOpen(false) }}
-              className="w-full px-4 py-2.5 text-left text-xs flex items-center gap-2 transition-colors"
-              style={{ background: t === value ? 'rgba(0,212,255,0.12)' : 'transparent', color: t === value ? '#00d4ff' : '#c8d3e0' }}>
-              <span className="font-bold">Type {t}</span>
-              <span style={{ color: '#8892a4' }}>
-                {t === 'H' ? '— High quality steel' : t === 'M' ? '— Medium alloy' : '— Low grade standard'}
+        <div className="absolute top-full mt-1 left-0 right-0 z-50 glass rounded-xl overflow-hidden shadow-2xl">
+          {MACHINES_LIST.map(m => (
+            <button key={m.id} onClick={() => { onSelect(m); setOpen(false) }}
+              className="w-full px-4 py-2.5 text-left text-xs flex items-center justify-between transition-colors"
+              style={{ background: m.id === selectedId ? 'rgba(0,212,255,0.12)' : 'transparent', color: m.id === selectedId ? '#00d4ff' : '#c8d3e0' }}>
+              <div className="flex items-center gap-2">
+                <span className="font-bold mono text-white">{m.id}</span>
+                <span style={{ color: '#8892a4' }}>— {m.name}</span>
+              </div>
+              <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
+                style={{
+                  background: m.status === 'critical' ? 'rgba(255,68,68,0.15)' : m.status === 'warning' ? 'rgba(255,179,0,0.15)' : 'rgba(0,255,136,0.15)',
+                  color: m.status === 'critical' ? '#ff4444' : m.status === 'warning' ? '#ffb300' : '#00ff88',
+                }}>
+                {m.status.toUpperCase()}
               </span>
             </button>
           ))}
@@ -359,13 +393,13 @@ function MachineDropdown({ value, onChange }) {
    ════════════════════════════════════════════════ */
 export default function Predictions() {
   const [inputs, setInputs] = useState(INITIAL_INPUTS)
-  const [prob, setProb] = useState(0.42)
+  const [prob, setProb] = useState(0.68)
   const [loading, setLoading] = useState(false)
   const [shap, setShap] = useState(() => computeShap(INITIAL_INPUTS))
   const [history, setHistory] = useState(SEED_HISTORY)
   const [useLive, setUseLive] = useState(false)
   const [lastUpdated, setLastUpdated] = useState(new Date())
-  const [hasRun, setHasRun] = useState(false)
+  const [hasRun, setHasRun] = useState(true)
   const liveRef = useRef(null)
 
   const meta = probLabel(prob)
@@ -375,19 +409,58 @@ export default function Predictions() {
     setInputs(prev => ({ ...prev, [key]: val }))
   }, [])
 
-  /* Live data feed */
+  /* Handle machine selection */
+  const handleSelectMachine = useCallback((m) => {
+    setInputs({
+      machineId: m.id,
+      machineType: m.type,
+      airTemp: m.currentReadings.airTemp,
+      procTemp: m.currentReadings.procTemp,
+      rpm: m.currentReadings.speed,
+      torque: m.currentReadings.torque,
+      toolWear: m.currentReadings.toolWear,
+    })
+    const simProb = simulateModel({
+      ...m.currentReadings,
+      machineType: m.type,
+      rpm: m.currentReadings.speed,
+    })
+    setProb(simProb)
+    setShap(computeShap({
+      ...m.currentReadings,
+      machineType: m.type,
+      rpm: m.currentReadings.speed,
+    }))
+  }, [])
+
+  /* Live data feed (Every 3 seconds) */
   useEffect(() => {
     if (!useLive) { if (liveRef.current) clearInterval(liveRef.current); return }
     liveRef.current = setInterval(() => {
-      setInputs({
-        airTemp:     +(300 + (Math.random() - 0.5) * 6).toFixed(1),
-        procTemp:    +(310 + (Math.random() - 0.5) * 5).toFixed(1),
-        rpm:         Math.round(1500 + (Math.random() - 0.5) * 800),
-        torque:      +(40  + (Math.random() - 0.5) * 30).toFixed(1),
-        toolWear:    +(inputs.toolWear + Math.random() * 1.5).toFixed(0),
-        machineType: inputs.machineType,
+      setInputs(prev => {
+        const nextAir = clamp(+(prev.airTemp + (Math.random() - 0.5) * 0.3).toFixed(1), 295.0, 305.0)
+        const nextProc = clamp(+(prev.procTemp + (Math.random() - 0.5) * 0.25).toFixed(1), 308.0, 313.0)
+        const nextRpm = clamp(Math.round(prev.rpm + (Math.random() - 0.5) * 40), 1200, 2800)
+        const nextTorque = clamp(+(prev.torque + (Math.random() - 0.5) * 1.1).toFixed(1), 35.0, 65.0)
+        const nextWear = clamp(prev.toolWear + (Math.random() < 0.3 ? 1 : 0), 0, 200)
+
+        const updated = {
+          ...prev,
+          airTemp: nextAir,
+          procTemp: nextProc,
+          rpm: nextRpm,
+          torque: nextTorque,
+          toolWear: nextWear,
+        }
+
+        const newProb = simulateModel(updated)
+        setProb(newProb)
+        setShap(computeShap(updated))
+        setLastUpdated(new Date())
+
+        return updated
       })
-    }, 1500)
+    }, 3000)
     return () => clearInterval(liveRef.current)
   }, [useLive])
 
@@ -477,9 +550,9 @@ export default function Predictions() {
             ))}
           </div>
 
-          {/* Machine type */}
+          {/* Machine selector (6 machines) */}
           <div className="pt-1 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-            <MachineDropdown value={inputs.machineType} onChange={v => setField('machineType', v)} />
+            <MachineDropdown selectedId={inputs.machineId} onSelect={handleSelectMachine} />
           </div>
 
           {/* Reset + Predict */}

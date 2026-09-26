@@ -13,20 +13,29 @@ import GlassCard from '../components/GlassCard'
 /* ════════════════════════════════════════════════
    CONSTANTS
    ════════════════════════════════════════════════ */
-const MACHINES = Array.from({ length: 10 }, (_, i) => `L-${String(i + 1).padStart(3, '0')}`)
+const MACHINES = ['L-001', 'L-002', 'M-003', 'M-004', 'H-005', 'H-006']
+
+const MACHINE_PROFILES = {
+  'L-001': { type: 'L', status: 'normal',   base: { airTemp: 298.6, procTemp: 309.8, torque: 42.1, rpm: 1650, toolWear: 48 } },
+  'L-002': { type: 'L', status: 'normal',   base: { airTemp: 299.4, procTemp: 310.1, torque: 44.5, rpm: 1720, toolWear: 72 } },
+  'M-003': { type: 'M', status: 'warning',  base: { airTemp: 302.2, procTemp: 311.9, torque: 56.4, rpm: 2180, toolWear: 154 } },
+  'M-004': { type: 'M', status: 'normal',   base: { airTemp: 298.9, procTemp: 309.5, torque: 41.8, rpm: 1590, toolWear: 55 } },
+  'H-005': { type: 'H', status: 'critical', base: { airTemp: 304.6, procTemp: 312.8, torque: 63.8, rpm: 2620, toolWear: 192 } },
+  'H-006': { type: 'H', status: 'warning',  base: { airTemp: 301.8, procTemp: 311.5, torque: 58.2, rpm: 2340, toolWear: 142 } },
+}
 
 const REFRESH_RATES = [
-  { label: '1s',  ms: 1000 },
-  { label: '5s',  ms: 5000 },
-  { label: '10s', ms: 10000 },
+  { label: '3s (Live)', ms: 3000 },
+  { label: '1s',        ms: 1000 },
+  { label: '5s',        ms: 5000 },
 ]
 
 const SENSORS = {
-  airTemp:  { key: 'airTemp',  label: 'Air Temperature',     unit: 'K',   color: '#00d4ff', icon: Thermometer, min: 295, max: 305, warnAt: 302, dangerAt: 304, baseVal: 300 },
-  procTemp: { key: 'procTemp', label: 'Process Temperature', unit: 'K',   color: '#c084fc', icon: Wind,        min: 305, max: 315, warnAt: 312, dangerAt: 314, baseVal: 310 },
-  rpm:      { key: 'rpm',      label: 'Rotational Speed',    unit: 'RPM', color: '#00ff88', icon: Gauge,       min: 1000, max: 3000, warnAt: 2400, dangerAt: 2700, baseVal: 1500 },
-  torque:   { key: 'torque',   label: 'Torque',              unit: 'Nm',  color: '#ffb300', icon: Zap,         min: 0, max: 80, warnAt: 55, dangerAt: 68, baseVal: 40 },
-  toolWear: { key: 'toolWear', label: 'Tool Wear',           unit: 'min', color: '#ff4444', icon: Wrench,      min: 0, max: 250, warnAt: 175, dangerAt: 210, baseVal: 80 },
+  airTemp:  { key: 'airTemp',  label: 'Air Temperature',     unit: 'K',   color: '#00d4ff', icon: Thermometer, min: 295,  max: 305,  warnAt: 303.0, dangerAt: 304.5, baseVal: 299.8 },
+  procTemp: { key: 'procTemp', label: 'Process Temperature', unit: 'K',   color: '#c084fc', icon: Wind,        min: 308,  max: 313,  warnAt: 312.0, dangerAt: 312.8, baseVal: 310.4 },
+  rpm:      { key: 'rpm',      label: 'Rotational Speed',    unit: 'RPM', color: '#00ff88', icon: Gauge,       min: 1200, max: 2800, warnAt: 2400,  dangerAt: 2650,  baseVal: 1750  },
+  torque:   { key: 'torque',   label: 'Torque',              unit: 'Nm',  color: '#ffb300', icon: Zap,         min: 35,   max: 65,   warnAt: 58.0,  dangerAt: 62.5,  baseVal: 48.0  },
+  toolWear: { key: 'toolWear', label: 'Tool Wear',           unit: 'min', color: '#ff4444', icon: Wrench,      min: 0,    max: 200,  warnAt: 160,   dangerAt: 185,   baseVal: 85    },
 }
 
 const MAX_HISTORY = 60
@@ -51,15 +60,22 @@ function sensorStatus(s, v) {
 function normalize(v, min, max) { return Math.max(0, Math.min(1, (v - min) / (max - min))) }
 
 function nextVal(s, prev) {
-  const speed = s.key === 'rpm' ? 60 : s.key === 'toolWear' ? 0.3 : 0.4
-  const noise = (s.max - s.min) * 0.025
+  const noise = (s.max - s.min) * 0.02
   let v = prev + (Math.random() - 0.5) * noise * 2
-  if (s.key === 'toolWear') v += speed * Math.random()
-  return clamp(v, s.min, s.max)
+  if (s.key === 'toolWear') {
+    v += Math.random() < 0.3 ? 0.3 : 0
+    if (v > s.max) v = 0
+  }
+  return clamp(+v.toFixed(1), s.min, s.max)
 }
 
-function makeInitialState() {
-  return Object.fromEntries(Object.values(SENSORS).map(s => [s.key, s.baseVal + (Math.random() - 0.5) * (s.max - s.min) * 0.1]))
+function makeInitialState(machineId = 'L-001') {
+  const profile = MACHINE_PROFILES[machineId] || MACHINE_PROFILES['L-001']
+  return Object.fromEntries(Object.values(SENSORS).map(s => {
+    const base = profile.base[s.key] ?? s.baseVal
+    const delta = (Math.random() - 0.5) * (s.max - s.min) * 0.04
+    return [s.key, clamp(+(base + delta).toFixed(1), s.min, s.max)]
+  }))
 }
 
 function makeInitialHistory(current) {
@@ -67,7 +83,10 @@ function makeInitialHistory(current) {
     const t = -(MAX_HISTORY - 1 - i)
     return {
       t,
-      ...Object.fromEntries(Object.values(SENSORS).map(s => [s.key, clamp(current[s.key] + (Math.random() - 0.5) * (s.max - s.min) * 0.08, s.min, s.max)]))
+      ...Object.fromEntries(Object.values(SENSORS).map(s => {
+        const delta = (Math.random() - 0.5) * (s.max - s.min) * 0.03
+        return [s.key, clamp(+(current[s.key] + delta).toFixed(1), s.min, s.max)]
+      }))
     }
   })
 }
@@ -425,14 +444,14 @@ function exportCSV(history) {
    ════════════════════════════════════════════════ */
 export default function LiveSensors() {
   const [machine, setMachine] = useState('L-001')
-  const [refreshRate, setRefreshRate] = useState('1s')
+  const [refreshRate, setRefreshRate] = useState('3s (Live)')
   const [connected, setConnected] = useState(true)
-  const [current, setCurrent] = useState(makeInitialState)
-  const [history, setHistory] = useState(() => makeInitialHistory(makeInitialState()))
+  const [current, setCurrent] = useState(() => makeInitialState('L-001'))
+  const [history, setHistory] = useState(() => makeInitialHistory(makeInitialState('L-001')))
   const [visible, setVisible] = useState({ airTemp: true, procTemp: true, rpm: true, torque: true, toolWear: true })
   const [zoom, setZoom] = useState(60)       // how many points to show
 
-  const refreshMs = REFRESH_RATES.find(r => r.label === refreshRate)?.ms || 1000
+  const refreshMs = REFRESH_RATES.find(r => r.label === refreshRate)?.ms || 3000
 
   /* Tick */
   const tick = useCallback(() => {
@@ -454,7 +473,12 @@ export default function LiveSensors() {
   /* Simulate disconnect on machine change */
   useEffect(() => {
     setConnected(false)
-    const t = setTimeout(() => { setConnected(true); setCurrent(makeInitialState()); setHistory(makeInitialHistory(makeInitialState())) }, 800)
+    const t = setTimeout(() => {
+      setConnected(true)
+      const state = makeInitialState(machine)
+      setCurrent(state)
+      setHistory(makeInitialHistory(state))
+    }, 400)
     return () => clearTimeout(t)
   }, [machine])
 

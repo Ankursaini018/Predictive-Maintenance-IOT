@@ -9,76 +9,60 @@ import {
 } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
 
+import { SHAP_TOP_10, INITIAL_MACHINES } from '../data/mockData'
+
 /* ════════════════════════════════════════════════
-   DATA  (derived from model_metadata.json + SHAP analysis)
+   DATA  (derived from SHAP analysis: Tool Wear 0.42, Torque 0.31, Factory Load 0.18)
    ════════════════════════════════════════════════ */
 
-/* ── 15 global features ─────────────────────── */
-const GLOBAL_FEATURES = [
-  { name: 'Tool wear [min]',              importance: 0.187, category: 'sensor',      color: '#fbbf24' },
-  { name: 'Torque [Nm]',                  importance: 0.164, category: 'sensor',      color: '#00d4ff' },
-  { name: 'factory_load',                 importance: 0.142, category: 'external',    color: '#a78bfa' },
-  { name: 'power (torque×rpm)',           importance: 0.128, category: 'engineered',  color: '#ffb300' },
-  { name: 'temp_delta',                   importance: 0.115, category: 'engineered',  color: '#ffb300' },
-  { name: 'Tool wear [min]_roll_mean',    importance: 0.096, category: 'rolling',     color: '#c084fc' },
-  { name: 'Torque [Nm]_roll_mean',        importance: 0.083, category: 'rolling',     color: '#c084fc' },
-  { name: 'Rotational speed [rpm]',       importance: 0.071, category: 'sensor',      color: '#00d4ff' },
-  { name: 'torque_per_rpm',              importance: 0.065, category: 'engineered',  color: '#ffb300' },
-  { name: 'total_anomaly_score',          importance: 0.058, category: 'external',    color: '#a78bfa' },
-  { name: 'Torque [Nm]_lag1',            importance: 0.051, category: 'rolling',     color: '#c084fc' },
-  { name: 'tool_wear_rate',              importance: 0.044, category: 'engineered',  color: '#ffb300' },
-  { name: 'humidity_pct',                importance: 0.039, category: 'external',    color: '#a78bfa' },
-  { name: 'Process temperature [K]',     importance: 0.033, category: 'sensor',      color: '#00d4ff' },
-  { name: 'Air temperature [K]',         importance: 0.025, category: 'sensor',      color: '#00d4ff' },
-]
+/* ── Top 10 global features ─────────────────────── */
+const GLOBAL_FEATURES = SHAP_TOP_10
 
 /* ── Category cards ─────────────────────────── */
 const CATEGORIES = [
   {
     key: 'sensor', label: 'IoT Sensors', pct: 45, color: '#00d4ff',
     icon: Cpu,
-    features: ['Air Temp', 'Process Temp', 'RPM', 'Torque', 'Tool Wear'],
+    features: ['Tool Wear', 'Torque', 'Speed', 'Air Temp'],
     desc: 'Raw sensor readings from the machine spindle and environment.',
   },
   {
     key: 'rolling', label: 'Rolling Features', pct: 25, color: '#c084fc',
     icon: Layers,
-    features: ['roll_mean', 'roll_std', 'roll_var', 'lag features'],
+    features: ['Torque Rolling Mean', 'roll_std', 'lag features'],
     desc: 'Temporal window statistics capturing trend and variability.',
   },
   {
     key: 'external', label: 'External Context', pct: 20, color: '#00ff88',
     icon: Wind,
-    features: ['factory_load', 'humidity', 'weather', 'anomaly_score'],
-    desc: 'Contextual data fusion from outside the machine envelope.',
+    features: ['Factory Load', 'humidity', 'ambient_temp'],
+    desc: 'Contextual plant-wide load and environmental variables.',
   },
   {
     key: 'engineered', label: 'Engineered', pct: 10, color: '#ffb300',
     icon: Zap,
-    features: ['power', 'temp_delta', 'tool_wear_rate', 'torque/rpm'],
+    features: ['Power (Torque×Speed)', 'Temp Delta (ΔT)', 'Tool Wear Rate'],
     desc: 'Domain-derived cross-features with strongest signal-to-noise.',
   },
 ]
 
-/* ── Waterfall machines ─────────────────────── */
+/* ── Waterfall machines (Exact 6 machines) ─────────────────────── */
 const WATERFALL_MACHINES = [
-  { id: 'M-7823', label: 'M-7823 (Critical)', finalProb: 0.94 },
-  { id: 'H-5502', label: 'H-5502 (Warning)',  finalProb: 0.67 },
-  { id: 'L-3319', label: 'L-3319 (Normal)',   finalProb: 0.18 },
+  { id: 'H-005', label: 'H-005 (Critical)', finalProb: 0.94 },
+  { id: 'M-003', label: 'M-003 (Warning)',  finalProb: 0.68 },
+  { id: 'L-001', label: 'L-001 (Normal)',   finalProb: 0.12 },
 ]
 
 function makeWaterfall(finalProb) {
   const base = 0.42
   const steps = [
     { name: 'Base Value',        delta: 0,   cumulative: base },
-    { name: 'Tool Wear',         delta: finalProb > 0.6 ? +0.21 : +0.07 },
-    { name: 'Torque [Nm]',      delta: finalProb > 0.6 ? +0.14 : +0.03 },
-    { name: 'factory_load',      delta: finalProb > 0.6 ? +0.09 : -0.04 },
-    { name: 'power',             delta: finalProb > 0.6 ? +0.06 : -0.08 },
-    { name: 'temp_delta',        delta: finalProb > 0.6 ? +0.05 : -0.06 },
-    { name: 'humidity_pct',      delta: -0.03 },
-    { name: 'RPM',               delta: finalProb > 0.6 ? +0.02 : -0.04 },
-    { name: 'type_encoded',      delta: finalProb > 0.6 ? +0.01 : -0.02 },
+    { name: 'Tool Wear [min]',   delta: finalProb > 0.6 ? +0.28 : -0.14 },
+    { name: 'Torque [Nm]',       delta: finalProb > 0.6 ? +0.18 : -0.08 },
+    { name: 'Factory Load',      delta: finalProb > 0.6 ? +0.10 : -0.04 },
+    { name: 'Power (Torque×RPM)',delta: finalProb > 0.6 ? +0.06 : -0.03 },
+    { name: 'Temp Delta (ΔT)',   delta: finalProb > 0.6 ? +0.04 : -0.02 },
+    { name: 'Rotational Speed',  delta: finalProb > 0.6 ? +0.02 : -0.01 },
   ]
 
   let running = base
@@ -298,19 +282,34 @@ function WaterfallBar(props) {
    ════════════════════════════════════════════════ */
 export default function FeatureAnalysis() {
   const [activeCat, setActiveCat] = useState('all')
-  const [selectedMachine, setSelectedMachine] = useState('M-7823')
+  const [selectedMachine, setSelectedMachine] = useState('H-005')
   const [chartVisible, setChartVisible] = useState(false)
+  const [features, setFeatures] = useState(GLOBAL_FEATURES)
+  const [lastTick, setLastTick] = useState(new Date())
 
   useEffect(() => {
     const t = setTimeout(() => setChartVisible(true), 150)
     return () => clearTimeout(t)
   }, [])
 
-  const machine = WATERFALL_MACHINES.find(m => m.id === selectedMachine)
+  /* 3-second dynamic feature drift to simulate live model explanation stream */
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setFeatures(prev => prev.map(f => {
+        const delta = (Math.random() - 0.5) * 0.006
+        const newImp = Math.max(0.01, +(f.importance + delta).toFixed(3))
+        return { ...f, importance: newImp }
+      }))
+      setLastTick(new Date())
+    }, 3000)
+    return () => clearInterval(iv)
+  }, [])
+
+  const machine = WATERFALL_MACHINES.find(m => m.id === selectedMachine) || WATERFALL_MACHINES[0]
   const waterfallData = makeWaterfall(machine.finalProb)
 
   /* Filter + sort global features */
-  const displayed = GLOBAL_FEATURES
+  const displayed = features
     .filter(f => activeCat === 'all' || f.category === activeCat)
 
   return (
@@ -326,9 +325,14 @@ export default function FeatureAnalysis() {
             </div>
             <h1 className="text-xl font-bold text-white tracking-tight">Model Explainability</h1>
             <ShapInfoBubble />
+            <span className="flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-full"
+              style={{ background: 'rgba(0,255,136,0.08)', color: '#00ff88', border: '1px solid rgba(0,255,136,0.2)' }}>
+              <span className="status-dot live" style={{ width: 6, height: 6 }} />
+              Live Stream · 3s
+            </span>
           </div>
           <p className="text-xs ml-11" style={{ color: '#8892a4' }}>
-            SHAP Value Analysis · LightGBM · 57 features · Stratified 5-Fold CV
+            SHAP Value Analysis · LightGBM · Top 10 Features · Tool Wear #1 (0.42), Torque #2 (0.31), Factory Load #3 (0.18)
           </p>
         </div>
 
@@ -366,11 +370,11 @@ export default function FeatureAnalysis() {
           </div>
           <div className="flex items-center gap-3">
             {[
-              ['#fbbf24', '#1 Tool Wear'],
-              ['#00d4ff', 'Sensor'],
-              ['#c084fc', 'Rolling'],
-              ['#a78bfa', 'External'],
+              ['#fbbf24', '#1 Tool Wear (0.42)'],
+              ['#00d4ff', '#2 Torque (0.31)'],
+              ['#a78bfa', '#3 Factory Load (0.18)'],
               ['#ffb300', 'Engineered'],
+              ['#c084fc', 'Rolling'],
             ].map(([c, l]) => (
               <span key={l} className="flex items-center gap-1.5 text-[10px]" style={{ color: '#8892a4' }}>
                 <span className="w-2.5 h-2.5 rounded-sm" style={{ background: c }} />{l}
@@ -390,7 +394,7 @@ export default function FeatureAnalysis() {
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" horizontal={false} />
               <XAxis
                 type="number"
-                domain={[0, 0.21]}
+                domain={[0, 0.48]}
                 tickFormatter={v => `${(v * 100).toFixed(0)}%`}
                 tick={{ fontSize: 10, fill: '#8892a4' }}
               />
