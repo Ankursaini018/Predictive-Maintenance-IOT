@@ -6,6 +6,7 @@ import {
 import {
   Cpu, Bell, AlertTriangle, BarChart2, ChevronLeft, ChevronRight,
   Clock, Wrench, Zap, ThermometerSun, Gauge, Activity,
+  ArrowUpDown, ArrowUp, ArrowDown,
 } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
 import StatusBadge from '../components/StatusBadge'
@@ -21,6 +22,50 @@ import {
    CONSTANTS & CONFIG
    ════════════════════════════════════════════════ */
 const PAGE_SIZE = 5
+
+export const CHART_TIME_RANGES = [
+  { id: '1H',  label: '1H',  points: 60, sub: '60 min (live 3s)' },
+  { id: '6H',  label: '6H',  points: 36, sub: '6 hours (10m res)' },
+  { id: '24H', label: '24H', points: 24, sub: '24 hours (1h res)' },
+  { id: '7D',  label: '7D',  points: 28, sub: '7 days (6h res)' },
+]
+
+export function generateDashboardHistory(range = '1H') {
+  if (range === '1H') return generateSensorHistory(60)
+  const rangeConfig = CHART_TIME_RANGES.find(r => r.id === range) || CHART_TIME_RANGES[0]
+  const count = rangeConfig.points
+  const now = Date.now()
+  const stepMs = range === '6H' ? 10 * 60 * 1000 : range === '24H' ? 60 * 60 * 1000 : 6 * 60 * 60 * 1000
+
+  return Array.from({ length: count }, (_, i) => {
+    const tStamp = new Date(now - (count - 1 - i) * stepMs)
+    let timeStr = ''
+    if (range === '6H' || range === '24H') {
+      timeStr = tStamp.toTimeString().slice(0, 5)
+    } else {
+      timeStr = `${tStamp.getMonth() + 1}/${tStamp.getDate()}`
+    }
+
+    const air = clamp(298 + Math.sin(i / 3) * 3 + (Math.random() - 0.5) * 1.5, 295, 305)
+    const proc = clamp(air + 9.5 + Math.cos(i / 3) * 1.5 + (Math.random() - 0.5) * 0.8, 308, 313)
+    const torq = clamp(48 + Math.sin(i / 2) * 8 + (Math.random() - 0.5) * 4, 35, 65)
+    const spd = clamp(Math.round(1800 + Math.cos(i / 2) * 400 + (Math.random() - 0.5) * 100), 1200, 2800)
+    const wear = clamp(Math.round((i / count) * 140 + (Math.random() - 0.5) * 10), 10, 190)
+
+    return {
+      index: i + 1,
+      time: timeStr,
+      airTemp: +air.toFixed(1),
+      procTemp: +proc.toFixed(1),
+      torque: +torq.toFixed(1),
+      speed: spd,
+      toolWear: wear,
+      tempDelta: +(proc - air).toFixed(1),
+      speedScaled: +(spd / 40).toFixed(1),
+      toolWearScaled: +(wear / 2).toFixed(1),
+    }
+  })
+}
 
 /* ════════════════════════════════════════════════
    SUB-COMPONENTS
@@ -212,21 +257,61 @@ const RISK_META = {
    MAIN COMPONENT
    ════════════════════════════════════════════════ */
 export default function Dashboard() {
+  const [chartRange, setChartRange] = useState('1H')
   const [sensorData, setSensorData] = useState(() => generateSensorHistory(60))
   const [machines, setMachines] = useState(INITIAL_MACHINES)
   const [predictions] = useState(generateRecentPredictions)
   const [page, setPage] = useState(0)
-  const totalPages = Math.ceil(predictions.length / PAGE_SIZE)
-  const pageData = predictions.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE)
+
+  /* Table sorting state (Ascending/Descending toggle on column header click) */
+  const [sortCol, setSortCol] = useState('time')
+  const [sortAsc, setSortAsc] = useState(false)
+
+  const handleSort = (colKey) => {
+    if (sortCol === colKey) {
+      setSortAsc(a => !a)
+    } else {
+      setSortCol(colKey)
+      setSortAsc(colKey === 'id' || colKey === 'action')
+    }
+  }
+
+  const sortedPredictions = [...predictions].sort((a, b) => {
+    let diff = 0
+    if (sortCol === 'prob') {
+      diff = a.prob - b.prob
+    } else if (sortCol === 'id') {
+      diff = a.id.localeCompare(b.id)
+    } else if (sortCol === 'status') {
+      const rank = { Critical: 3, High: 3, Warning: 2, Medium: 2, Normal: 1, Low: 1 }
+      diff = (rank[a.status] || 0) - (rank[b.status] || 0)
+    } else if (sortCol === 'action') {
+      diff = (a.action || '').localeCompare(b.action || '')
+    } else {
+      diff = (a.time || '').localeCompare(b.time || '')
+    }
+    return sortAsc ? diff : -diff
+  })
+
+  const totalPages = Math.ceil(sortedPredictions.length / PAGE_SIZE)
+  const pageData = sortedPredictions.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE)
+
+  /* Time range switch handler: 1H / 6H / 24H / 7D */
+  const handleRangeChange = (rId) => {
+    setChartRange(rId)
+    setSensorData(generateDashboardHistory(rId))
+  }
 
   /* Live sensor tick every 3s */
   useEffect(() => {
     const iv = setInterval(() => {
-      setSensorData(prev => {
-        const last = prev[prev.length - 1]
-        const next = driftSensorPoint(last, last.index + 1)
-        return [...prev.slice(1), next]
-      })
+      if (chartRange === '1H') {
+        setSensorData(prev => {
+          const last = prev[prev.length - 1]
+          const next = driftSensorPoint(last, last.index + 1)
+          return [...prev.slice(1), next]
+        })
+      }
 
       // Slightly drift machine sparkline readings every 3s
       setMachines(prev => prev.map(m => {
@@ -240,11 +325,11 @@ export default function Dashboard() {
       }))
     }, 3000)
     return () => clearInterval(iv)
-  }, [])
+  }, [chartRange])
 
   /* Chart dataset */
   const chartData = sensorData.map(d => ({
-    t: d.index,
+    t: d.time || d.index,
     time: d.time,
     'Air Temp (K)':       d.airTemp,
     'Proc Temp (K)':      d.procTemp,
@@ -303,14 +388,44 @@ export default function Dashboard() {
 
         {/* Real-time sensor chart (60%) */}
         <GlassCard className="col-span-7 p-5">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
             <div>
-              <p className="text-sm font-semibold text-white">Real-Time Sensor Monitor</p>
-              <p className="text-xs" style={{ color: '#8892a4' }}>Last 60 readings · live 3s updates</p>
+              <p className="text-sm font-semibold text-white">Real-Time Sensor Monitor ({chartRange})</p>
+              <p className="text-xs" style={{ color: '#8892a4' }}>
+                {chartRange === '1H' ? 'Last 60 readings · live 3s updates' : `${CHART_TIME_RANGES.find(r => r.id === chartRange)?.sub}`}
+              </p>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="status-dot live" />
-              <span className="text-xs font-medium" style={{ color: '#00ff88' }}>Live 3s</span>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* Time range buttons: 1H / 6H / 24H / 7D */}
+              <div className="flex items-center gap-1 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                {CHART_TIME_RANGES.map(tr => {
+                  const active = chartRange === tr.id
+                  return (
+                    <button
+                      key={tr.id}
+                      onClick={() => handleRangeChange(tr.id)}
+                      className="px-2.5 py-1 rounded-lg text-xs font-bold transition-all"
+                      style={{
+                        background: active ? 'linear-gradient(135deg, rgba(0,212,255,0.28) 0%, rgba(0,180,255,0.18) 100%)' : 'transparent',
+                        border: `1px solid ${active ? 'rgba(0,212,255,0.45)' : 'transparent'}`,
+                        color: active ? '#00d4ff' : '#8892a4',
+                        boxShadow: active ? '0 0 10px rgba(0,212,255,0.25)' : 'none',
+                      }}
+                      title={tr.sub}
+                    >
+                      {tr.label}
+                    </button>
+                  )
+                })}
+              </div>
+
+              {chartRange === '1H' && (
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg" style={{ background: 'rgba(0,255,136,0.08)', border: '1px solid rgba(0,255,136,0.2)' }}>
+                  <span className="status-dot live" />
+                  <span className="text-xs font-medium" style={{ color: '#00ff88' }}>Live 3s</span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -403,14 +518,34 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Column headers */}
+        {/* Column headers with interactive sorting */}
         <div className="grid grid-cols-12 px-6 py-2.5 text-[10px] uppercase tracking-widest"
           style={{ color: '#8892a4', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-          <span className="col-span-2">Machine ID</span>
-          <span className="col-span-2">Timestamp</span>
-          <span className="col-span-2">Failure Prob.</span>
-          <span className="col-span-2">Status</span>
-          <span className="col-span-4">Action Recommended</span>
+          {[
+            { key: 'id', label: 'Machine ID', span: 'col-span-2' },
+            { key: 'time', label: 'Timestamp', span: 'col-span-2' },
+            { key: 'prob', label: 'Failure Prob.', span: 'col-span-2' },
+            { key: 'status', label: 'Status', span: 'col-span-2' },
+            { key: 'action', label: 'Action Recommended', span: 'col-span-4' },
+          ].map(col => {
+            const isSorted = sortCol === col.key
+            return (
+              <button
+                key={col.key}
+                onClick={() => handleSort(col.key)}
+                className={`${col.span} flex items-center gap-1.5 text-left transition-colors hover:text-white group py-0.5`}
+                style={{ color: isSorted ? '#00d4ff' : undefined }}
+                title={`Sort by ${col.label} (${isSorted ? (sortAsc ? 'Ascending' : 'Descending') : 'Click to sort'})`}
+              >
+                <span className="font-semibold">{col.label}</span>
+                {isSorted ? (
+                  sortAsc ? <ArrowUp size={11} className="text-cyan-400 shrink-0" /> : <ArrowDown size={11} className="text-cyan-400 shrink-0" />
+                ) : (
+                  <ArrowUpDown size={10} className="opacity-30 group-hover:opacity-80 shrink-0" />
+                )}
+              </button>
+            )
+          })}
         </div>
 
         {/* Rows */}

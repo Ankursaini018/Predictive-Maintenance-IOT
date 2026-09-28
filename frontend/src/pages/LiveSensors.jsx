@@ -69,23 +69,48 @@ function nextVal(s, prev) {
   return clamp(+v.toFixed(1), s.min, s.max)
 }
 
+const TIME_RANGES = [
+  { id: '1H',  label: '1H',  points: 60, stepMin: 1,   sub: '60 min (1m res)' },
+  { id: '6H',  label: '6H',  points: 36, stepMin: 10,  sub: '6 hours (10m res)' },
+  { id: '24H', label: '24H', points: 24, stepMin: 60,  sub: '24 hours (1h res)' },
+  { id: '7D',  label: '7D',  points: 28, stepMin: 360, sub: '7 days (6h res)' },
+]
+
 function makeInitialState(machineId = 'L-001') {
   const profile = MACHINE_PROFILES[machineId] || MACHINE_PROFILES['L-001']
   return Object.fromEntries(Object.values(SENSORS).map(s => {
     const base = profile.base[s.key] ?? s.baseVal
-    const delta = (Math.random() - 0.5) * (s.max - s.min) * 0.04
+    const delta = (Math.random() - 0.5) * (s.max - s.min) * 0.03
     return [s.key, clamp(+(base + delta).toFixed(1), s.min, s.max)]
   }))
 }
 
-function makeInitialHistory(current) {
-  return Array.from({ length: MAX_HISTORY }, (_, i) => {
-    const t = -(MAX_HISTORY - 1 - i)
+function makeRangeHistory(machineId = 'L-001', range = '1H') {
+  const profile = MACHINE_PROFILES[machineId] || MACHINE_PROFILES['L-001']
+  const rangeConfig = TIME_RANGES.find(r => r.id === range) || TIME_RANGES[0]
+  const count = rangeConfig.points
+  const step = rangeConfig.stepMin
+
+  return Array.from({ length: count }, (_, i) => {
+    const minAgo = (count - 1 - i) * step
+    let label = ''
+    if (range === '1H') {
+      label = minAgo === 0 ? 'Now' : `-${minAgo}m`
+    } else if (range === '6H') {
+      label = minAgo === 0 ? 'Now' : `-${(minAgo / 60).toFixed(1)}h`
+    } else if (range === '24H') {
+      label = minAgo === 0 ? 'Now' : `-${Math.round(minAgo / 60)}h`
+    } else {
+      label = minAgo === 0 ? 'Today' : `D-${Math.round(minAgo / 1440)}`
+    }
+
     return {
-      t,
+      t: label,
+      timeOffset: -minAgo,
       ...Object.fromEntries(Object.values(SENSORS).map(s => {
-        const delta = (Math.random() - 0.5) * (s.max - s.min) * 0.03
-        return [s.key, clamp(+(current[s.key] + delta).toFixed(1), s.min, s.max)]
+        const base = profile.base[s.key] ?? s.baseVal
+        const drift = (Math.sin(i / 2.5) * 0.4 + (Math.random() - 0.5)) * (s.max - s.min) * 0.05
+        return [s.key, clamp(+(base + drift).toFixed(1), s.min, s.max)]
       }))
     }
   })
@@ -444,48 +469,59 @@ function exportCSV(history) {
    ════════════════════════════════════════════════ */
 export default function LiveSensors() {
   const [machine, setMachine] = useState('L-001')
+  const [timeRange, setTimeRange] = useState('1H')
   const [refreshRate, setRefreshRate] = useState('3s (Live)')
   const [connected, setConnected] = useState(true)
   const [current, setCurrent] = useState(() => makeInitialState('L-001'))
-  const [history, setHistory] = useState(() => makeInitialHistory(makeInitialState('L-001')))
+  const [history, setHistory] = useState(() => makeRangeHistory('L-001', '1H'))
   const [visible, setVisible] = useState({ airTemp: true, procTemp: true, rpm: true, torque: true, toolWear: true })
-  const [zoom, setZoom] = useState(60)       // how many points to show
 
   const refreshMs = REFRESH_RATES.find(r => r.label === refreshRate)?.ms || 3000
+
+  /* Instant Machine Switcher: updates ALL 5 sensors immediately with distinct values */
+  const handleSelectMachine = useCallback((newMachine) => {
+    setMachine(newMachine)
+    const newState = makeInitialState(newMachine)
+    setCurrent(newState)
+    setHistory(makeRangeHistory(newMachine, timeRange))
+    // Brief connection refresh pulse
+    setConnected(false)
+    setTimeout(() => setConnected(true), 120)
+  }, [timeRange])
+
+  /* Time Range Switcher: changes chart data range */
+  const handleTimeRangeChange = useCallback((rangeId) => {
+    setTimeRange(rangeId)
+    setHistory(makeRangeHistory(machine, rangeId))
+  }, [machine])
 
   /* Tick */
   const tick = useCallback(() => {
     setCurrent(prev => {
       const next = Object.fromEntries(Object.values(SENSORS).map(s => [s.key, nextVal(s, prev[s.key])]))
       setHistory(h => {
-        const point = { t: h[h.length - 1].t + 1, ...next }
-        return [...h.slice(-(MAX_HISTORY - 1)), point]
+        if (timeRange === '1H') {
+          const point = { t: 'Now', timeOffset: 0, ...next }
+          return [...h.slice(1), point]
+        } else {
+          const updated = [...h]
+          if (updated.length > 0) {
+            updated[updated.length - 1] = { ...updated[updated.length - 1], ...next, t: 'Now' }
+          }
+          return updated
+        }
       })
       return next
     })
-  }, [])
+  }, [timeRange])
 
   useEffect(() => {
     const iv = setInterval(tick, refreshMs)
     return () => clearInterval(iv)
   }, [tick, refreshMs])
 
-  /* Simulate disconnect on machine change */
-  useEffect(() => {
-    setConnected(false)
-    const t = setTimeout(() => {
-      setConnected(true)
-      const state = makeInitialState(machine)
-      setCurrent(state)
-      setHistory(makeInitialHistory(state))
-    }, 400)
-    return () => clearTimeout(t)
-  }, [machine])
-
-  const chartData = history.slice(-zoom)
-
   /* Normalise rpm & toolWear for chart co-display */
-  const normalizedChart = chartData.map(h => ({
+  const normalizedChart = history.map(h => ({
     t: h.t,
     airTemp:    h.airTemp,
     procTemp:   h.procTemp,
@@ -501,8 +537,34 @@ export default function LiveSensors() {
 
       {/* ══ TOP BAR ══ */}
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <div className="flex items-center gap-3">
-          <Dropdown value={machine} options={MACHINES} onChange={m => setMachine(m)} label="Machine" />
+        {/* Machine selection controls */}
+        <div className="flex items-center gap-3 flex-wrap">
+          {/* Quick Machine Chips */}
+          <div className="flex items-center gap-1 p-1 rounded-xl glass">
+            {MACHINES.map(mId => {
+              const prof = MACHINE_PROFILES[mId]
+              const active = machine === mId
+              const statusColor = prof.status === 'critical' ? '#ff4444' : prof.status === 'warning' ? '#ffb300' : '#00ff88'
+              return (
+                <button
+                  key={mId}
+                  onClick={() => handleSelectMachine(mId)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all"
+                  style={{
+                    background: active ? 'rgba(0,212,255,0.18)' : 'transparent',
+                    border: `1px solid ${active ? 'rgba(0,212,255,0.45)' : 'transparent'}`,
+                    color: active ? '#ffffff' : '#8892a4',
+                    boxShadow: active ? '0 0 10px rgba(0,212,255,0.25)' : 'none',
+                  }}
+                  title={`${mId} (${prof.type}-type, status: ${prof.status})`}
+                >
+                  <span className="w-2 h-2 rounded-full" style={{ background: statusColor, boxShadow: `0 0 6px ${statusColor}80` }} />
+                  <span className="mono">{mId}</span>
+                </button>
+              )
+            })}
+          </div>
+
           <Dropdown
             value={refreshRate}
             options={REFRESH_RATES.map(r => r.label)}
@@ -521,7 +583,7 @@ export default function LiveSensors() {
             style={{ background: connected ? 'rgba(0,255,136,0.08)' : 'rgba(255,68,68,0.08)', border: `1px solid ${connected ? 'rgba(0,255,136,0.2)' : 'rgba(255,68,68,0.2)'}` }}>
             {connected
               ? <><span className="status-dot live" /><Wifi size={13} color="#00ff88" /><span className="text-xs font-medium" style={{ color: '#00ff88' }}>Connected</span></>
-              : <><span className="status-dot danger" /><WifiOff size={13} color="#ff4444" /><span className="text-xs font-medium" style={{ color: '#ff4444' }}>Reconnecting…</span></>
+              : <><span className="status-dot danger" /><WifiOff size={13} color="#ff4444" /><span className="text-xs font-medium" style={{ color: '#ff4444' }}>Syncing…</span></>
             }
           </div>
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg glass text-xs" style={{ color: '#8892a4' }}>
@@ -656,8 +718,10 @@ export default function LiveSensors() {
         {/* Chart header */}
         <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
           <div>
-            <p className="text-sm font-semibold text-white">Sensor History</p>
-            <p className="text-xs" style={{ color: '#8892a4' }}>Last {zoom} readings · {machine}</p>
+            <p className="text-sm font-semibold text-white">Sensor History ({timeRange})</p>
+            <p className="text-xs" style={{ color: '#8892a4' }}>
+              {history.length} data points · Machine {machine} · {TIME_RANGES.find(r => r.id === timeRange)?.sub}
+            </p>
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
@@ -679,15 +743,27 @@ export default function LiveSensors() {
               ))}
             </div>
 
-            {/* Zoom controls */}
-            <div className="flex items-center gap-1 px-2 py-1 rounded-lg" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <button onClick={() => setZoom(z => Math.max(10, z - 10))} className="flex items-center justify-center w-6 h-6 rounded transition-colors hover:bg-white/10">
-                <ZoomOut size={12} color="#8892a4" />
-              </button>
-              <span className="text-[11px] mono px-1" style={{ color: '#8892a4' }}>{zoom}pts</span>
-              <button onClick={() => setZoom(z => Math.min(MAX_HISTORY, z + 10))} className="flex items-center justify-center w-6 h-6 rounded transition-colors hover:bg-white/10">
-                <ZoomIn size={12} color="#8892a4" />
-              </button>
+            {/* Time range buttons: 1H / 6H / 24H / 7D */}
+            <div className="flex items-center gap-1 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              {TIME_RANGES.map(tr => {
+                const active = timeRange === tr.id
+                return (
+                  <button
+                    key={tr.id}
+                    onClick={() => handleTimeRangeChange(tr.id)}
+                    className="px-2.5 py-1 rounded-lg text-xs font-bold transition-all"
+                    style={{
+                      background: active ? 'linear-gradient(135deg, rgba(0,212,255,0.28) 0%, rgba(0,180,255,0.18) 100%)' : 'transparent',
+                      border: `1px solid ${active ? 'rgba(0,212,255,0.45)' : 'transparent'}`,
+                      color: active ? '#00d4ff' : '#8892a4',
+                      boxShadow: active ? '0 0 10px rgba(0,212,255,0.25)' : 'none',
+                    }}
+                    title={tr.sub}
+                  >
+                    {tr.label}
+                  </button>
+                )
+              })}
             </div>
 
             {/* Export */}
@@ -708,7 +784,7 @@ export default function LiveSensors() {
         <ResponsiveContainer width="100%" height={260}>
           <LineChart data={normalizedChart} margin={{ top: 4, right: 16, bottom: 0, left: -20 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-            <XAxis dataKey="t" tick={{ fontSize: 10, fill: '#8892a4' }} interval={Math.floor(zoom / 8)} />
+            <XAxis dataKey="t" tick={{ fontSize: 10, fill: '#8892a4' }} interval={Math.max(1, Math.floor(history.length / 8))} />
             <YAxis tick={{ fontSize: 10, fill: '#8892a4' }} domain={['auto', 'auto']} />
             <Tooltip content={<ChartTooltip />} />
 

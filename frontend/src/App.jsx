@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar'
 import Header from './components/Header'
 import Breadcrumb from './components/Breadcrumb'
 import { ToastProvider } from './components/Toast'
+import { ThemeProvider } from './context/ThemeContext'
 import Dashboard from './pages/Dashboard'
 import LiveSensors from './pages/LiveSensors'
 import Predictions from './pages/Predictions'
@@ -57,15 +58,17 @@ function AnimatedRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
-      <ToastProvider>
-        <div className="flex h-screen w-screen overflow-hidden bg-grid">
-          <Sidebar />
-          <div className="flex flex-col flex-1 overflow-hidden min-w-0">
-            <Header />
-            <AnimatedRoutes />
+      <ThemeProvider>
+        <ToastProvider>
+          <div className="app-shell flex h-screen w-screen overflow-hidden bg-grid">
+            <Sidebar />
+            <div className="flex flex-col flex-1 overflow-hidden min-w-0">
+              <Header />
+              <AnimatedRoutes />
+            </div>
           </div>
-        </div>
-      </ToastProvider>
+        </ToastProvider>
+      </ThemeProvider>
     </BrowserRouter>
   )
 }

@@ -7,6 +7,7 @@ import {
   Cpu, RefreshCw, Play, Radio, Clock, CheckCircle,
   AlertTriangle, XCircle, ChevronDown, Zap, TrendingUp,
   Thermometer, Gauge, Wrench, Wind, RotateCcw,
+  ArrowUpDown, ArrowUp, ArrowDown,
 } from 'lucide-react'
 import GlassCard from '../components/GlassCard'
 
@@ -21,11 +22,11 @@ import {
    CONSTANTS & DATA
    ════════════════════════════════════════════════ */
 const SENSOR_FIELDS = [
-  { key: 'airTemp',  label: 'Air Temperature',     unit: 'K',   min: 295,  max: 305,  step: 0.1, icon: Thermometer, color: '#00d4ff', def: 299.8 },
-  { key: 'procTemp', label: 'Process Temperature', unit: 'K',   min: 308,  max: 313,  step: 0.1, icon: Wind,        color: '#c084fc', def: 310.4 },
-  { key: 'rpm',      label: 'Rotational Speed',    unit: 'RPM', min: 1200, max: 2800, step: 10,  icon: Gauge,       color: '#00ff88', def: 1750  },
-  { key: 'torque',   label: 'Torque',              unit: 'Nm',  min: 35,   max: 65,   step: 0.5, icon: Zap,         color: '#ffb300', def: 48.0  },
-  { key: 'toolWear', label: 'Tool Wear',           unit: 'min', min: 0,    max: 200,  step: 1,   icon: Wrench,      color: '#ff4444', def: 85    },
+  { key: 'airTemp',  label: 'Air Temperature',     unit: 'K',   min: 295,  max: 310,  step: 0.1, icon: Thermometer, color: '#00d4ff', def: 299.8 },
+  { key: 'procTemp', label: 'Process Temperature', unit: 'K',   min: 305,  max: 320,  step: 0.1, icon: Wind,        color: '#c084fc', def: 310.4 },
+  { key: 'rpm',      label: 'Rotational Speed',    unit: 'RPM', min: 1000, max: 3000, step: 10,  icon: Gauge,       color: '#00ff88', def: 1750  },
+  { key: 'torque',   label: 'Torque',              unit: 'Nm',  min: 30,   max: 80,   step: 0.5, icon: Zap,         color: '#ffb300', def: 48.0  },
+  { key: 'toolWear', label: 'Tool Wear',           unit: 'min', min: 0,    max: 250,  step: 1,   icon: Wrench,      color: '#ff4444', def: 85    },
 ]
 
 const MACHINES_LIST = INITIAL_MACHINES
@@ -47,22 +48,39 @@ function computeShap(inputs) {
   ].sort((a, b) => Math.abs(b.impact) - Math.abs(a.impact))
 }
 
-/* ── Simulate model output ─────────────────────── */
-function simulateModel(inputs) {
-  const wearScore = inputs.toolWear / 200
-  const torqueScore = (inputs.torque - 35) / 30
-  const power = (inputs.torque * inputs.rpm) / 95000
-  const tempDelta = (inputs.procTemp - inputs.airTemp) - 10.0
-  const typeBonus = inputs.machineType === 'H' ? 0.08 : inputs.machineType === 'M' ? 0.03 : -0.04
+/* ── Real-time prediction formula (Tool Wear > 200, Torque > 65) ── */
+function calculatePredictionRealtime(inputs) {
+  let p = 0.08 // healthy baseline
 
-  const rawScore =
-    0.42 * wearScore +
-    0.31 * torqueScore +
-    0.18 * (power > 1 ? 0.6 : 0.2) +
-    0.09 * Math.max(0, tempDelta / 3) +
-    typeBonus
+  // Tool Wear > 200 → high probability
+  if (inputs.toolWear > 200) {
+    p += 0.65 + ((inputs.toolWear - 200) / 50) * 0.23 // reaches 0.78 - 0.96
+  } else if (inputs.toolWear > 150) {
+    p += 0.28 + ((inputs.toolWear - 150) / 50) * 0.25 // warning territory 0.36 - 0.61
+  } else if (inputs.toolWear > 100) {
+    p += 0.10 + ((inputs.toolWear - 100) / 50) * 0.12
+  }
 
-  return Math.min(0.98, Math.max(0.04, +(rawScore + (Math.random() - 0.5) * 0.03).toFixed(2)))
+  // Torque > 65 → increase probability
+  if (inputs.torque > 65) {
+    p += 0.28 + ((inputs.torque - 65) / 15) * 0.20 // surges if torque > 65
+  } else if (inputs.torque > 52) {
+    p += 0.12 + ((inputs.torque - 52) / 13) * 0.12
+  }
+
+  // Temp Delta (procTemp - airTemp)
+  const delta = inputs.procTemp - inputs.airTemp
+  if (delta > 12) {
+    p += 0.18 + Math.min(0.15, (delta - 12) * 0.04)
+  } else if (delta > 10.5) {
+    p += 0.08
+  }
+
+  // Machine Type modifier
+  if (inputs.machineType === 'H') p += 0.04
+  if (inputs.machineType === 'L') p -= 0.03
+
+  return Math.min(0.99, Math.max(0.02, +p.toFixed(2)))
 }
 
 function probLabel(p) {
@@ -96,7 +114,7 @@ const SEED_HISTORY = generateRecentPredictions()
    SVG PROBABILITY GAUGE
    ════════════════════════════════════════════════ */
 function ProbGauge({ prob, loading }) {
-  const [displayed, setDisplayed] = useState(0)
+  const [displayed, setDisplayed] = useState(prob)
   const animRef = useRef(null)
 
   useEffect(() => {
@@ -104,7 +122,8 @@ function ProbGauge({ prob, loading }) {
     let start = null
     const from = displayed
     const to   = prob
-    const DURATION = 1200
+    // Fast, responsive smooth easing for real-time slider updates
+    const DURATION = Math.min(320, Math.max(90, Math.abs(to - from) * 500))
 
     function step(ts) {
       if (!start) start = ts
@@ -404,14 +423,50 @@ export default function Predictions() {
 
   const meta = probLabel(prob)
 
-  /* Update individual field */
+  /* Sorting state for recent history */
+  const [sortField, setSortField] = useState('time')
+  const [sortDir, setSortDir] = useState('desc')
+
+  const toggleSort = (field) => {
+    if (sortField === field) {
+      setSortDir(d => (d === 'asc' ? 'desc' : 'asc'))
+    } else {
+      setSortField(field)
+      setSortDir(field === 'time' || field === 'prob' ? 'desc' : 'asc')
+    }
+  }
+
+  const sortedHistory = [...history].sort((a, b) => {
+    let diff = 0
+    if (sortField === 'prob') {
+      diff = a.prob - b.prob
+    } else if (sortField === 'id') {
+      diff = (a.id || '').localeCompare(b.id || '')
+    } else if (sortField === 'status') {
+      const rank = { Critical: 3, Warning: 2, Normal: 1 }
+      diff = (rank[a.status] || 0) - (rank[b.status] || 0)
+    } else {
+      diff = (a.time || '').localeCompare(b.time || '')
+    }
+    return sortDir === 'asc' ? diff : -diff
+  })
+
+  /* Update individual field - REAL TIME PREDICTION CALCULATION */
   const setField = useCallback((key, val) => {
-    setInputs(prev => ({ ...prev, [key]: val }))
+    setInputs(prev => {
+      const updated = { ...prev, [key]: val }
+      // Immediately calculate new prediction probability in real time
+      const newProb = calculatePredictionRealtime(updated)
+      setProb(newProb)
+      setShap(computeShap(updated))
+      setLastUpdated(new Date())
+      return updated
+    })
   }, [])
 
   /* Handle machine selection */
   const handleSelectMachine = useCallback((m) => {
-    setInputs({
+    const updated = {
       machineId: m.id,
       machineType: m.type,
       airTemp: m.currentReadings.airTemp,
@@ -419,18 +474,12 @@ export default function Predictions() {
       rpm: m.currentReadings.speed,
       torque: m.currentReadings.torque,
       toolWear: m.currentReadings.toolWear,
-    })
-    const simProb = simulateModel({
-      ...m.currentReadings,
-      machineType: m.type,
-      rpm: m.currentReadings.speed,
-    })
-    setProb(simProb)
-    setShap(computeShap({
-      ...m.currentReadings,
-      machineType: m.type,
-      rpm: m.currentReadings.speed,
-    }))
+    }
+    setInputs(updated)
+    const newProb = calculatePredictionRealtime(updated)
+    setProb(newProb)
+    setShap(computeShap(updated))
+    setLastUpdated(new Date())
   }, [])
 
   /* Live data feed (Every 3 seconds) */
@@ -438,11 +487,11 @@ export default function Predictions() {
     if (!useLive) { if (liveRef.current) clearInterval(liveRef.current); return }
     liveRef.current = setInterval(() => {
       setInputs(prev => {
-        const nextAir = clamp(+(prev.airTemp + (Math.random() - 0.5) * 0.3).toFixed(1), 295.0, 305.0)
-        const nextProc = clamp(+(prev.procTemp + (Math.random() - 0.5) * 0.25).toFixed(1), 308.0, 313.0)
-        const nextRpm = clamp(Math.round(prev.rpm + (Math.random() - 0.5) * 40), 1200, 2800)
-        const nextTorque = clamp(+(prev.torque + (Math.random() - 0.5) * 1.1).toFixed(1), 35.0, 65.0)
-        const nextWear = clamp(prev.toolWear + (Math.random() < 0.3 ? 1 : 0), 0, 200)
+        const nextAir = clamp(+(prev.airTemp + (Math.random() - 0.5) * 0.3).toFixed(1), 295.0, 310.0)
+        const nextProc = clamp(+(prev.procTemp + (Math.random() - 0.5) * 0.25).toFixed(1), 305.0, 320.0)
+        const nextRpm = clamp(Math.round(prev.rpm + (Math.random() - 0.5) * 40), 1000, 3000)
+        const nextTorque = clamp(+(prev.torque + (Math.random() - 0.5) * 1.1).toFixed(1), 30.0, 80.0)
+        const nextWear = clamp(prev.toolWear + (Math.random() < 0.3 ? 1 : 0), 0, 250)
 
         const updated = {
           ...prev,
@@ -453,7 +502,7 @@ export default function Predictions() {
           toolWear: nextWear,
         }
 
-        const newProb = simulateModel(updated)
+        const newProb = calculatePredictionRealtime(updated)
         setProb(newProb)
         setShap(computeShap(updated))
         setLastUpdated(new Date())
@@ -467,17 +516,19 @@ export default function Predictions() {
   /* Run prediction */
   const runPrediction = useCallback(async () => {
     setLoading(true)
-    await new Promise(r => setTimeout(r, 1400 + Math.random() * 600))
-    const result = simulateModel(inputs)
+    await new Promise(r => setTimeout(r, 600 + Math.random() * 400))
+    const result = calculatePredictionRealtime(inputs)
     setProb(result)
     setShap(computeShap(inputs))
     setLastUpdated(new Date())
     setHasRun(true)
     setHistory(prev => [{
+      id: inputs.machineId,
       time: new Date().toLocaleTimeString('en-IN', { hour12: false }),
       prob: result,
-      result: result >= 0.7 ? 'Failure' : result >= 0.3 ? 'Warning' : 'Normal',
-      known: false,
+      status: result >= 0.7 ? 'Critical' : result >= 0.3 ? 'Warning' : 'Normal',
+      failureType: result >= 0.7 ? (inputs.toolWear > 190 ? 'Tool Wear Failure (TWF)' : inputs.torque > 60 ? 'Power Failure (PWF)' : 'Heat Dissipation (HDF)') : undefined,
+      action: actionText(result),
     }, ...prev.slice(0, 9)])
     setLoading(false)
   }, [inputs])
@@ -713,10 +764,10 @@ export default function Predictions() {
 
       {/* ══ HISTORY TIMELINE ══ */}
       <GlassCard className="p-5">
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
           <div>
             <p className="text-sm font-semibold text-white">Recent Predictions History</p>
-            <p className="text-xs" style={{ color: '#8892a4' }}>Timeline · {history.length} predictions</p>
+            <p className="text-xs" style={{ color: '#8892a4' }}>Interactive Timeline · {sortedHistory.length} predictions</p>
           </div>
           <div className="flex items-center gap-3">
             {[['#ff4444', 'Critical'], ['#ffb300', 'Warning'], ['#00ff88', 'Normal']].map(([c, l]) => (
@@ -727,9 +778,45 @@ export default function Predictions() {
           </div>
         </div>
 
+        {/* Sort Controls Bar */}
+        <div className="flex items-center justify-between px-3 py-2 rounded-lg mb-3 flex-wrap gap-2"
+          style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <span className="text-[11px] font-medium" style={{ color: '#8892a4' }}>Click to Sort:</span>
+          <div className="flex items-center gap-2 flex-wrap">
+            {[
+              { key: 'time', label: 'Timestamp' },
+              { key: 'id', label: 'Machine ID' },
+              { key: 'prob', label: 'Failure Prob.' },
+              { key: 'status', label: 'Severity Status' },
+            ].map(col => {
+              const active = sortField === col.key
+              return (
+                <button
+                  key={col.key}
+                  onClick={() => toggleSort(col.key)}
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-all"
+                  style={{
+                    background: active ? 'rgba(0,212,255,0.15)' : 'rgba(255,255,255,0.05)',
+                    border: `1px solid ${active ? 'rgba(0,212,255,0.4)' : 'rgba(255,255,255,0.08)'}`,
+                    color: active ? '#00d4ff' : '#8892a4',
+                  }}
+                  title={`Sort by ${col.label} (${active ? (sortDir === 'asc' ? 'Ascending' : 'Descending') : 'Click to sort'})`}
+                >
+                  <span>{col.label}</span>
+                  {active ? (
+                    sortDir === 'asc' ? <ArrowUp size={11} /> : <ArrowDown size={11} />
+                  ) : (
+                    <ArrowUpDown size={11} opacity={0.5} />
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
         <div className="space-y-0 pl-2">
-          {history.map((item, i) => (
-            <HistoryRow key={`${item.time}-${i}`} item={item} idx={i} />
+          {sortedHistory.map((item, i) => (
+            <HistoryRow key={`${item.id}-${item.time}-${i}`} item={item} idx={i} />
           ))}
         </div>
       </GlassCard>
