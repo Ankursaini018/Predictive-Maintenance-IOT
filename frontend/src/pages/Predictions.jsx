@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Cell, ReferenceLine,
@@ -436,20 +436,22 @@ export default function Predictions() {
     }
   }
 
-  const sortedHistory = [...history].sort((a, b) => {
-    let diff = 0
-    if (sortField === 'prob') {
-      diff = a.prob - b.prob
-    } else if (sortField === 'id') {
-      diff = (a.id || '').localeCompare(b.id || '')
-    } else if (sortField === 'status') {
-      const rank = { Critical: 3, Warning: 2, Normal: 1 }
-      diff = (rank[a.status] || 0) - (rank[b.status] || 0)
-    } else {
-      diff = (a.time || '').localeCompare(b.time || '')
-    }
-    return sortDir === 'asc' ? diff : -diff
-  })
+  const sortedHistory = useMemo(() => {
+    return [...history].sort((a, b) => {
+      let diff = 0
+      if (sortField === 'prob') {
+        diff = a.prob - b.prob
+      } else if (sortField === 'id') {
+        diff = (a.id || '').localeCompare(b.id || '')
+      } else if (sortField === 'status') {
+        const rank = { Critical: 3, Warning: 2, Normal: 1 }
+        diff = (rank[a.status] || 0) - (rank[b.status] || 0)
+      } else {
+        diff = (a.time || '').localeCompare(b.time || '')
+      }
+      return sortDir === 'asc' ? diff : -diff
+    })
+  }, [history, sortField, sortDir])
 
   /* Update individual field - REAL TIME PREDICTION CALCULATION */
   const setField = useCallback((key, val) => {
@@ -575,10 +577,10 @@ export default function Predictions() {
       </div>
 
       {/* ══ MAIN 3-COL LAYOUT ══ */}
-      <div className="grid grid-cols-12 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
 
         {/* ── LEFT: Input Panel ── */}
-        <GlassCard className="col-span-4 p-5 space-y-4">
+        <GlassCard className="col-span-1 lg:col-span-4 p-5 space-y-4">
           <div className="flex items-center justify-between">
             <p className="text-xs font-semibold uppercase tracking-wider text-white">Sensor Inputs</p>
             {/* Live data toggle */}
@@ -629,7 +631,7 @@ export default function Predictions() {
         </GlassCard>
 
         {/* ── CENTER: Main Prediction Card ── */}
-        <GlassCard className="col-span-4 p-6 flex flex-col items-center gap-4"
+        <GlassCard className="col-span-1 lg:col-span-4 p-6 flex flex-col items-center gap-4"
           style={{ borderTop: `2px solid ${meta.color}60` }}>
           <div className="text-center">
             <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#8892a4' }}>Prediction Result</p>
@@ -692,7 +694,7 @@ export default function Predictions() {
         </GlassCard>
 
         {/* ── RIGHT: SHAP Chart ── */}
-        <GlassCard className="col-span-4 p-5 flex flex-col gap-4">
+        <GlassCard className="col-span-1 lg:col-span-4 p-5 flex flex-col gap-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-white">SHAP Feature Impact</p>
             <p className="text-[11px] mt-0.5" style={{ color: '#8892a4' }}>Top 5 features for this prediction</p>
@@ -814,10 +816,12 @@ export default function Predictions() {
           </div>
         </div>
 
-        <div className="space-y-0 pl-2">
-          {sortedHistory.map((item, i) => (
-            <HistoryRow key={`${item.id}-${item.time}-${i}`} item={item} idx={i} />
-          ))}
+        <div className="overflow-x-auto">
+          <div className="min-w-[560px] space-y-0 pl-2">
+            {sortedHistory.map((item, i) => (
+              <HistoryRow key={`${item.id}-${item.time}-${i}`} item={item} idx={i} />
+            ))}
+          </div>
         </div>
       </GlassCard>
 

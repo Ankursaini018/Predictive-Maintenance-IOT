@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, BarChart, Bar, Cell,
@@ -276,22 +276,25 @@ export default function Dashboard() {
     }
   }
 
-  const sortedPredictions = [...predictions].sort((a, b) => {
-    let diff = 0
-    if (sortCol === 'prob') {
-      diff = a.prob - b.prob
-    } else if (sortCol === 'id') {
-      diff = a.id.localeCompare(b.id)
-    } else if (sortCol === 'status') {
-      const rank = { Critical: 3, High: 3, Warning: 2, Medium: 2, Normal: 1, Low: 1 }
-      diff = (rank[a.status] || 0) - (rank[b.status] || 0)
-    } else if (sortCol === 'action') {
-      diff = (a.action || '').localeCompare(b.action || '')
-    } else {
-      diff = (a.time || '').localeCompare(b.time || '')
-    }
-    return sortAsc ? diff : -diff
-  })
+  /* ── Performance Optimization: Memoize Sorted Predictions ── */
+  const sortedPredictions = useMemo(() => {
+    return [...predictions].sort((a, b) => {
+      let diff = 0
+      if (sortCol === 'prob') {
+        diff = a.prob - b.prob
+      } else if (sortCol === 'id') {
+        diff = a.id.localeCompare(b.id)
+      } else if (sortCol === 'status') {
+        const rank = { Critical: 3, High: 3, Warning: 2, Medium: 2, Normal: 1, Low: 1 }
+        diff = (rank[a.status] || 0) - (rank[b.status] || 0)
+      } else if (sortCol === 'action') {
+        diff = (a.action || '').localeCompare(b.action || '')
+      } else {
+        diff = (a.time || '').localeCompare(b.time || '')
+      }
+      return sortAsc ? diff : -diff
+    })
+  }, [predictions, sortCol, sortAsc])
 
   const totalPages = Math.ceil(sortedPredictions.length / PAGE_SIZE)
   const pageData = sortedPredictions.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE)
@@ -327,28 +330,37 @@ export default function Dashboard() {
     return () => clearInterval(iv)
   }, [chartRange])
 
-  /* Chart dataset */
-  const chartData = sensorData.map(d => ({
-    t: d.time || d.index,
-    time: d.time,
-    'Air Temp (K)':       d.airTemp,
-    'Proc Temp (K)':      d.procTemp,
-    'Torque (Nm)':        d.torque,
-    'Speed (÷40)':        d.speedScaled,
-    'Tool Wear (min)':    d.toolWear,
-    rawSpeed:             d.speed,
-    rawWear:              d.toolWear,
-  }))
+  /* ── Performance Optimization: Memoize Chart Dataset ── */
+  const chartData = useMemo(() => {
+    return sensorData.map(d => ({
+      t: d.time || d.index,
+      time: d.time,
+      'Air Temp (K)':       d.airTemp,
+      'Proc Temp (K)':      d.procTemp,
+      'Torque (Nm)':        d.torque,
+      'Speed (÷40)':        d.speedScaled,
+      'Tool Wear (min)':    d.toolWear,
+      rawSpeed:             d.speed,
+      rawWear:              d.toolWear,
+    }))
+  }, [sensorData])
 
-  const critCount = machines.filter(m => m.status === 'critical').length
-  const warnCount = machines.filter(m => m.status === 'warning').length
-  const normCount = machines.filter(m => m.status === 'normal').length
+  /* ── Performance Optimization: Memoize Machine Counts ── */
+  const { critCount, warnCount, normCount } = useMemo(() => {
+    let crit = 0, warn = 0, norm = 0
+    for (const m of machines) {
+      if (m.status === 'critical') crit++
+      else if (m.status === 'warning') warn++
+      else norm++
+    }
+    return { critCount: crit, warnCount: warn, normCount: norm }
+  }, [machines])
 
   return (
     <div className="page-enter space-y-5">
 
-      {/* ══ SECTION 1 — KPI CARDS ══ */}
-      <div className="grid grid-cols-4 gap-4">
+      {/* ══ SECTION 1 — KPI CARDS (Mobile: 1 col, Tablet: 2 cols, Desktop: 4 cols) ══ */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KpiCard
           label="Total Machines Monitored"
           value={247}
@@ -383,11 +395,11 @@ export default function Dashboard() {
         />
       </div>
 
-      {/* ══ SECTION 2 — SENSOR CHART + MACHINE LIST ══ */}
-      <div className="grid grid-cols-12 gap-4">
+      {/* ══ SECTION 2 — SENSOR CHART + MACHINE LIST (Mobile/Tablet: 1 col, Desktop: 7/5 split) ══ */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
 
-        {/* Real-time sensor chart (60%) */}
-        <GlassCard className="col-span-7 p-5">
+        {/* Real-time sensor chart */}
+        <GlassCard className="col-span-1 lg:col-span-7 p-4 sm:p-5">
           <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
             <div>
               <p className="text-sm font-semibold text-white">Real-Time Sensor Monitor ({chartRange})</p>
@@ -475,8 +487,8 @@ export default function Dashboard() {
           </ResponsiveContainer>
         </GlassCard>
 
-        {/* Machine status list (40%) */}
-        <GlassCard className="col-span-5 p-5">
+        {/* Machine status list (Mobile/Tablet: 1 col, Desktop: 5 cols) */}
+        <GlassCard className="col-span-1 lg:col-span-5 p-4 sm:p-5">
           <div className="flex items-center justify-between mb-4">
             <div>
               <p className="text-sm font-semibold text-white">Machine Status</p>
@@ -518,8 +530,11 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Column headers with interactive sorting */}
-        <div className="grid grid-cols-12 px-6 py-2.5 text-[10px] uppercase tracking-widest"
+        {/* Scrollable container for mobile responsiveness */}
+        <div className="overflow-x-auto">
+          <div className="min-w-[680px]">
+            {/* Column headers with interactive sorting */}
+            <div className="grid grid-cols-12 px-6 py-2.5 text-[10px] uppercase tracking-widest"
           style={{ color: '#8892a4', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
           {[
             { key: 'id', label: 'Machine ID', span: 'col-span-2' },
@@ -604,6 +619,8 @@ export default function Dashboard() {
             )
           })}
         </div>
+      </div>
+    </div>
 
         {/* Pagination */}
         <div className="flex items-center justify-between px-6 py-3.5 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>

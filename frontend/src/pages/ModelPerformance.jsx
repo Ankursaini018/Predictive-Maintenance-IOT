@@ -367,7 +367,7 @@ export default function ModelPerformance() {
       </div>
 
       {/* ══ SECTION 1: METRIC CARDS ══ */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard label="Macro F1 Score"  value={0.87} color="#00ff88" icon={Award}      target="0.85" desc="Stratified 5-Fold CV · SMOTE balanced" delay={0}   />
         <MetricCard label="Precision"        value={0.84} color="#00d4ff" icon={ShieldCheck} desc="Post threshold tuning · 0.50 default"  delay={80}  />
         <MetricCard label="Recall"           value={0.89} color="#c084fc" icon={Target}      desc="Failure detection sensitivity"           delay={160} />
@@ -375,7 +375,7 @@ export default function ModelPerformance() {
       </div>
 
       {/* ══ SECTION 2: CONFUSION MATRIX + PR CURVE ══ */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
         {/* Confusion Matrix */}
         <GlassCard className="p-6">
@@ -537,7 +537,7 @@ export default function ModelPerformance() {
         </div>
 
         {/* Group descriptions */}
-        <div className="mt-4 grid grid-cols-7 gap-2">
+        <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
           {ABLATION.map(g => (
             <div key={g.group} className="flex flex-col gap-1 px-2 py-2 rounded-lg"
               style={{
@@ -624,7 +624,7 @@ export default function ModelPerformance() {
           </p>
         </div>
 
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {THRESHOLD_STRATEGIES.map((s, i) => {
             const Icon = s.icon
             return (

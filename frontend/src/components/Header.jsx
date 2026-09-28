@@ -1,5 +1,8 @@
 import { useLocation } from 'react-router-dom'
-import { Bell, Clock, Wifi, Sun, Moon, Check, Trash2, AlertTriangle, ShieldAlert, CheckCircle } from 'lucide-react'
+import {
+  Bell, Clock, Wifi, Sun, Moon, Check, Trash2,
+  AlertTriangle, ShieldAlert, CheckCircle, Menu, X,
+} from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import { useAlerts } from './Toast'
 import { useTheme } from '../context/ThemeContext'
@@ -12,7 +15,7 @@ const routeTitles = {
   '/performance': { title: 'Model Performance', sub: 'LightGBM evaluation metrics' },
 }
 
-export default function Header() {
+export default function Header({ onToggleMobileMenu, mobileOpen = false }) {
   const { pathname } = useLocation()
   const meta = routeTitles[pathname] || { title: 'PredictIQ', sub: 'Predictive Maintenance' }
   const [time, setTime] = useState(new Date())
@@ -67,26 +70,37 @@ export default function Header() {
         transition: 'background-color 0.3s ease, border-color 0.3s ease',
       }}
     >
-      {/* Title */}
-      <div>
-        <h1 className="header-title text-base font-bold leading-none tracking-tight">{meta.title}</h1>
-        <p className="header-sub text-xs mt-0.5">{meta.sub}</p>
+      {/* Title + Mobile Menu Button */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={onToggleMobileMenu}
+          className="md:hidden flex items-center justify-center w-8 h-8 rounded-lg text-white/80 hover:text-white shrink-0"
+          style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
+          aria-label="Toggle navigation menu"
+        >
+          {mobileOpen ? <X size={17} /> : <Menu size={17} />}
+        </button>
+
+        <div>
+          <h1 className="header-title text-sm sm:text-base font-bold leading-none tracking-tight">{meta.title}</h1>
+          <p className="header-sub text-[11px] sm:text-xs mt-0.5">{meta.sub}</p>
+        </div>
       </div>
 
       {/* Right cluster */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5">
             <span className="status-dot live" />
-            <span className="text-xs font-medium" style={{ color: '#00ff88' }}>System Online</span>
+            <span className="text-xs font-medium hidden sm:inline" style={{ color: '#00ff88' }}>System Online</span>
           </div>
-          <div className="divider-line h-3.5 w-px" />
-          <div className="flex items-center gap-1.5 text-xs text-muted-subtle">
+          <div className="divider-line h-3.5 w-px hidden md:block" />
+          <div className="hidden md:flex items-center gap-1.5 text-xs text-muted-subtle">
             <Wifi size={11} style={{ color: '#00d4ff' }} />
             <span>247 machines</span>
           </div>
-          <div className="divider-line h-3.5 w-px" />
-          <div className="flex items-center gap-1.5 text-xs text-muted-subtle">
+          <div className="divider-line h-3.5 w-px hidden lg:block" />
+          <div className="hidden lg:flex items-center gap-1.5 text-xs text-muted-subtle">
             <Clock size={11} />
             <span className="mono">{fmt(time)}</span>
             <span>·</span>
@@ -94,17 +108,17 @@ export default function Header() {
           </div>
         </div>
 
-        <div className="divider-line h-3.5 w-px" />
+        <div className="divider-line h-3.5 w-px hidden sm:block" />
 
         {/* Machine type badges */}
-        <div className="flex items-center gap-1.5">
+        <div className="hidden sm:flex items-center gap-1.5">
           {[['H', '#00d4ff'], ['M', '#00ff88'], ['L', '#8892a4']].map(([t, c]) => (
             <span key={t} className="px-2 py-0.5 rounded-md text-[10px] font-semibold"
               style={{ background: `${c}18`, color: c, border: `1px solid ${c}35` }}>
               {t}
             </span>
           ))}
-          <span className="text-xs ml-0.5 text-muted-subtle">Types</span>
+          <span className="text-xs ml-0.5 text-muted-subtle hidden md:inline">Types</span>
         </div>
 
         <div className="divider-line h-3.5 w-px" />

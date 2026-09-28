@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, ReferenceLine,
@@ -520,15 +520,17 @@ export default function LiveSensors() {
     return () => clearInterval(iv)
   }, [tick, refreshMs])
 
-  /* Normalise rpm & toolWear for chart co-display */
-  const normalizedChart = history.map(h => ({
-    t: h.t,
-    airTemp:    h.airTemp,
-    procTemp:   h.procTemp,
-    torque:     h.torque,
-    'rpm÷100':  visible.rpm      ? +(h.rpm / 100).toFixed(2) : undefined,
-    'wear÷10':  visible.toolWear ? +(h.toolWear / 10).toFixed(2) : undefined,
-  }))
+  /* ── Performance Optimization: Memoize Normalized Chart Dataset ── */
+  const normalizedChart = useMemo(() => {
+    return history.map(h => ({
+      t: h.t,
+      airTemp:    h.airTemp,
+      procTemp:   h.procTemp,
+      torque:     h.torque,
+      'rpm÷100':  visible.rpm      ? +(h.rpm / 100).toFixed(2) : undefined,
+      'wear÷10':  visible.toolWear ? +(h.toolWear / 10).toFixed(2) : undefined,
+    }))
+  }, [history, visible])
 
   const airDelta = (current.procTemp - current.airTemp).toFixed(1)
 
@@ -593,12 +595,12 @@ export default function LiveSensors() {
         </div>
       </div>
 
-      {/* ══ GAUGE CARDS 2-2-1 ══ */}
+      {/* ══ GAUGE CARDS 2-2-1 (Mobile: 1 col, Tablet: 2 cols) ══ */}
       {/* Row 1: Air Temp + Process Temp */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
         {/* Card 1 — Air Temperature */}
-        <GlassCard className="p-5" style={{ borderTop: `2px solid ${sensorColor(SENSORS.airTemp, current.airTemp)}40` }}>
+        <GlassCard className="p-4 sm:p-5" style={{ borderTop: `2px solid ${sensorColor(SENSORS.airTemp, current.airTemp)}40` }}>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <div className="flex items-center justify-center w-7 h-7 rounded-lg"
@@ -618,7 +620,7 @@ export default function LiveSensors() {
         </GlassCard>
 
         {/* Card 2 — Process Temperature */}
-        <GlassCard className="p-5" style={{ borderTop: `2px solid ${sensorColor(SENSORS.procTemp, current.procTemp)}40` }}>
+        <GlassCard className="p-4 sm:p-5" style={{ borderTop: `2px solid ${sensorColor(SENSORS.procTemp, current.procTemp)}40` }}>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <div className="flex items-center justify-center w-7 h-7 rounded-lg"
@@ -647,10 +649,10 @@ export default function LiveSensors() {
       </div>
 
       {/* Row 2: RPM + Torque */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
         {/* Card 3 — Rotational Speed (vertical bar) */}
-        <GlassCard className="p-5" style={{ borderTop: `2px solid ${sensorColor(SENSORS.rpm, current.rpm)}40` }}>
+        <GlassCard className="p-4 sm:p-5" style={{ borderTop: `2px solid ${sensorColor(SENSORS.rpm, current.rpm)}40` }}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <div className="flex items-center justify-center w-7 h-7 rounded-lg"
@@ -670,7 +672,7 @@ export default function LiveSensors() {
         </GlassCard>
 
         {/* Card 4 — Torque (horizontal bar) */}
-        <GlassCard className="p-5" style={{ borderTop: `2px solid ${sensorColor(SENSORS.torque, current.torque)}40` }}>
+        <GlassCard className="p-4 sm:p-5" style={{ borderTop: `2px solid ${sensorColor(SENSORS.torque, current.torque)}40` }}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <div className="flex items-center justify-center w-7 h-7 rounded-lg"
@@ -691,10 +693,10 @@ export default function LiveSensors() {
       </div>
 
       {/* Row 3: Tool Wear (centered, narrower) */}
-      <div className="grid grid-cols-3 gap-4">
-        <div />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="hidden md:block" />
         {/* Card 5 — Tool Wear */}
-        <GlassCard className="p-5" style={{ borderTop: `2px solid ${sensorColor(SENSORS.toolWear, current.toolWear)}40` }}>
+        <GlassCard className="p-4 sm:p-5" style={{ borderTop: `2px solid ${sensorColor(SENSORS.toolWear, current.toolWear)}40` }}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <div className="flex items-center justify-center w-7 h-7 rounded-lg"
@@ -710,7 +712,7 @@ export default function LiveSensors() {
           </div>
           <ToolWearGauge sensor={SENSORS.toolWear} value={current.toolWear} />
         </GlassCard>
-        <div />
+        <div className="hidden md:block" />
       </div>
 
       {/* ══ HISTORY CHART ══ */}

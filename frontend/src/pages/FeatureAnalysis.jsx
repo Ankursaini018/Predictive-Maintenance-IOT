@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Cell, ReferenceLine,
@@ -305,12 +305,11 @@ export default function FeatureAnalysis() {
     return () => clearInterval(iv)
   }, [])
 
-  const machine = WATERFALL_MACHINES.find(m => m.id === selectedMachine) || WATERFALL_MACHINES[0]
-  const waterfallData = makeWaterfall(machine.finalProb)
+  const machine = useMemo(() => WATERFALL_MACHINES.find(m => m.id === selectedMachine) || WATERFALL_MACHINES[0], [selectedMachine])
+  const waterfallData = useMemo(() => makeWaterfall(machine.finalProb), [machine.finalProb])
 
   /* Filter + sort global features */
-  const displayed = features
-    .filter(f => activeCat === 'all' || f.category === activeCat)
+  const displayed = useMemo(() => features.filter(f => activeCat === 'all' || f.category === activeCat), [features, activeCat])
 
   return (
     <div className="page-enter space-y-6">
@@ -420,7 +419,7 @@ export default function FeatureAnalysis() {
         </div>
 
         {/* Rank table quick summary */}
-        <div className="mt-5 pt-4 border-t grid grid-cols-5 gap-3" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+        <div className="mt-5 pt-4 border-t grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
           {GLOBAL_FEATURES.slice(0, 5).map((f, i) => (
             <div key={f.name} className="flex flex-col gap-1.5 px-3 py-2.5 rounded-xl"
               style={{ background: `${f.name === 'Tool wear [min]' ? '#fbbf24' : f.color}08`, border: `1px solid ${f.name === 'Tool wear [min]' ? '#fbbf24' : f.color}20` }}>
@@ -450,7 +449,7 @@ export default function FeatureAnalysis() {
           <p className="text-sm font-semibold text-white">Feature Category Breakdown</p>
           <p className="text-xs mt-0.5" style={{ color: '#8892a4' }}>Relative contribution of each feature group to model performance</p>
         </div>
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {CATEGORIES.map((c, i) => <CategoryRing key={c.key} cat={c} delay={i * 120} />)}
         </div>
       </div>
@@ -489,7 +488,7 @@ export default function FeatureAnalysis() {
         </div>
 
         {/* Base and final callouts */}
-        <div className="flex items-center gap-6 mb-4">
+        <div className="flex items-center gap-6 mb-4 flex-wrap">
           <div className="flex items-center gap-2 px-4 py-2 rounded-xl"
             style={{ background: 'rgba(136,146,164,0.1)', border: '1px solid rgba(136,146,164,0.2)' }}>
             <span className="text-[11px]" style={{ color: '#8892a4' }}>Base Value (E[f(x)]):</span>
@@ -510,85 +509,87 @@ export default function FeatureAnalysis() {
         </div>
 
         {/* Waterfall chart using horizontal bars */}
-        <div className="space-y-2">
-          {waterfallData.filter(d => d.type !== 'final').map((d, i) => {
-            const delta = d.end - d.start
-            const pctWidth = Math.abs(delta) * 100 * 4      // scale to ≤ ~100%
-            const baseOffset = d.type === 'base' ? 0 : d.start * 100 * 4
-            const isBase = d.type === 'base'
-            const barColor = isBase ? '#8892a4' : delta >= 0 ? '#ff4444' : '#00d4ff'
-            const maxWidth = 450
+        <div className="overflow-x-auto">
+          <div className="min-w-[560px] space-y-2">
+            {waterfallData.filter(d => d.type !== 'final').map((d, i) => {
+              const delta = d.end - d.start
+              const pctWidth = Math.abs(delta) * 100 * 4      // scale to ≤ ~100%
+              const baseOffset = d.type === 'base' ? 0 : d.start * 100 * 4
+              const isBase = d.type === 'base'
+              const barColor = isBase ? '#8892a4' : delta >= 0 ? '#ff4444' : '#00d4ff'
+              const maxWidth = 450
 
-            return (
-              <div key={d.name} className="flex items-center gap-3"
-                style={{ opacity: chartVisible ? 1 : 0, transform: chartVisible ? 'translateX(0)' : 'translateX(-10px)', transition: `all 0.45s ease ${i * 0.06}s` }}>
-                {/* Feature name */}
-                <span className="text-[11px] font-medium text-right shrink-0" style={{ color: '#c8d3e0', width: 170 }}>{d.name}</span>
+              return (
+                <div key={d.name} className="flex items-center gap-3"
+                  style={{ opacity: chartVisible ? 1 : 0, transform: chartVisible ? 'translateX(0)' : 'translateX(-10px)', transition: `all 0.45s ease ${i * 0.06}s` }}>
+                  {/* Feature name */}
+                  <span className="text-[11px] font-medium text-right shrink-0" style={{ color: '#c8d3e0', width: 170 }}>{d.name}</span>
 
-                {/* Bar row */}
-                <div className="relative flex-1 h-6 flex items-center" style={{ maxWidth }}>
-                  {/* Gray track */}
-                  <div className="absolute inset-0 rounded-lg" style={{ background: 'rgba(255,255,255,0.04)' }} />
-                  {/* Connector (cumulative offset) */}
-                  {!isBase && (
-                    <div className="absolute top-1/2 left-0 h-px" style={{ width: `${Math.min(baseOffset, maxWidth)}%`, background: 'rgba(255,255,255,0.08)' }} />
-                  )}
-                  {/* Actual bar */}
-                  <div
-                    className="absolute h-5 rounded-md"
-                    style={{
-                      left: isBase ? 0 : `${Math.min(Math.min(d.start, d.end) * 100 * 4, 98)}%`,
-                      width: isBase ? `${d.end * 100 * 4}%` : `${Math.max(pctWidth, 0.5)}%`,
-                      background: barColor,
-                      opacity: isBase ? 0.5 : 0.8,
-                      boxShadow: `0 0 6px ${barColor}50`,
-                      transition: 'width 0.6s ease, left 0.6s ease',
-                    }}
-                  />
-                </div>
+                  {/* Bar row */}
+                  <div className="relative flex-1 h-6 flex items-center" style={{ maxWidth }}>
+                    {/* Gray track */}
+                    <div className="absolute inset-0 rounded-lg" style={{ background: 'rgba(255,255,255,0.04)' }} />
+                    {/* Connector (cumulative offset) */}
+                    {!isBase && (
+                      <div className="absolute top-1/2 left-0 h-px" style={{ width: `${Math.min(baseOffset, maxWidth)}%`, background: 'rgba(255,255,255,0.08)' }} />
+                    )}
+                    {/* Actual bar */}
+                    <div
+                      className="absolute h-5 rounded-md"
+                      style={{
+                        left: isBase ? 0 : `${Math.min(Math.min(d.start, d.end) * 100 * 4, 98)}%`,
+                        width: isBase ? `${d.end * 100 * 4}%` : `${Math.max(pctWidth, 0.5)}%`,
+                        background: barColor,
+                        opacity: isBase ? 0.5 : 0.8,
+                        boxShadow: `0 0 6px ${barColor}50`,
+                        transition: 'width 0.6s ease, left 0.6s ease',
+                      }}
+                    />
+                  </div>
 
-                {/* Delta label */}
-                <div className="flex items-center gap-1 shrink-0" style={{ width: 80 }}>
-                  {!isBase && (
-                    delta >= 0
-                      ? <ArrowUpRight size={11} color="#ff4444" />
-                      : <ArrowDownRight size={11} color="#00d4ff" />
-                  )}
-                  <span className="text-[11px] mono font-semibold"
-                    style={{ color: isBase ? '#8892a4' : delta >= 0 ? '#ff4444' : '#00d4ff' }}>
-                    {isBase ? `${(d.end * 100).toFixed(0)}%` : `${delta >= 0 ? '+' : ''}${(delta * 100).toFixed(0)}%`}
+                  {/* Delta label */}
+                  <div className="flex items-center gap-1 shrink-0" style={{ width: 80 }}>
+                    {!isBase && (
+                      delta >= 0
+                        ? <ArrowUpRight size={11} color="#ff4444" />
+                        : <ArrowDownRight size={11} color="#00d4ff" />
+                    )}
+                    <span className="text-[11px] mono font-semibold"
+                      style={{ color: isBase ? '#8892a4' : delta >= 0 ? '#ff4444' : '#00d4ff' }}>
+                      {isBase ? `${(d.end * 100).toFixed(0)}%` : `${delta >= 0 ? '+' : ''}${(delta * 100).toFixed(0)}%`}
+                    </span>
+                  </div>
+
+                  {/* Cumulative */}
+                  <span className="text-[10px] mono shrink-0" style={{ color: '#8892a4', width: 40, textAlign: 'right' }}>
+                    {(d.end * 100).toFixed(0)}%
                   </span>
                 </div>
+              )
+            })}
 
-                {/* Cumulative */}
-                <span className="text-[10px] mono shrink-0" style={{ color: '#8892a4', width: 40, textAlign: 'right' }}>
-                  {(d.end * 100).toFixed(0)}%
+            {/* Final bar */}
+            {waterfallData.filter(d => d.type !== 'final').map(d => (
+              <div key="final" className="flex items-center gap-3 pt-2 border-t mt-2" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
+                <span className="text-[11px] font-bold text-right shrink-0" style={{ color: '#00d4ff', width: 170 }}>⇒ Final Prediction</span>
+                <div className="relative flex-1 h-7 flex items-center" style={{ maxWidth: 450 }}>
+                  <div className="absolute inset-0 rounded-lg" style={{ background: 'rgba(255,255,255,0.04)' }} />
+                  <div className="absolute h-6 rounded-md left-0"
+                    style={{
+                      width: `${d.end * 100 * 4}%`,
+                      background: machine.finalProb >= 0.7 ? '#ff4444' : machine.finalProb >= 0.3 ? '#ffb300' : '#00ff88',
+                      boxShadow: `0 0 12px ${machine.finalProb >= 0.7 ? '#ff4444' : machine.finalProb >= 0.3 ? '#ffb300' : '#00ff88'}60`,
+                      transition: 'width 0.8s cubic-bezier(0.4,0,0.2,1)',
+                    }} />
+                </div>
+                <span className="text-sm font-black mono shrink-0"
+                  style={{ color: machine.finalProb >= 0.7 ? '#ff4444' : machine.finalProb >= 0.3 ? '#ffb300' : '#00ff88', width: 80 }}>
+                  {(machine.finalProb * 100).toFixed(0)}%
                 </span>
+                <span className="text-[10px] mono shrink-0" style={{ color: '#8892a4', width: 40 }}></span>
               </div>
-            )
-          })}
-
-          {/* Final bar */}
-          {waterfallData.filter(d => d.type === 'final').map(d => (
-            <div key="final" className="flex items-center gap-3 pt-2 border-t mt-2" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
-              <span className="text-[11px] font-bold text-right shrink-0" style={{ color: '#00d4ff', width: 170 }}>⇒ Final Prediction</span>
-              <div className="relative flex-1 h-7 flex items-center" style={{ maxWidth: 450 }}>
-                <div className="absolute inset-0 rounded-lg" style={{ background: 'rgba(255,255,255,0.04)' }} />
-                <div className="absolute h-6 rounded-md left-0"
-                  style={{
-                    width: `${d.end * 100 * 4}%`,
-                    background: machine.finalProb >= 0.7 ? '#ff4444' : machine.finalProb >= 0.3 ? '#ffb300' : '#00ff88',
-                    boxShadow: `0 0 12px ${machine.finalProb >= 0.7 ? '#ff4444' : machine.finalProb >= 0.3 ? '#ffb300' : '#00ff88'}60`,
-                    transition: 'width 0.8s cubic-bezier(0.4,0,0.2,1)',
-                  }} />
-              </div>
-              <span className="text-sm font-black mono shrink-0"
-                style={{ color: machine.finalProb >= 0.7 ? '#ff4444' : machine.finalProb >= 0.3 ? '#ffb300' : '#00ff88', width: 80 }}>
-                {(machine.finalProb * 100).toFixed(0)}%
-              </span>
-              <span className="text-[10px] mono shrink-0" style={{ color: '#8892a4', width: 40 }}></span>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </GlassCard>
 
@@ -598,7 +599,7 @@ export default function FeatureAnalysis() {
           <p className="text-sm font-semibold text-white">Key Model Insights</p>
           <p className="text-xs mt-0.5" style={{ color: '#8892a4' }}>Derived from SHAP analysis and ablation study</p>
         </div>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
           {/* Insight 1 */}
           <GlassCard className="p-5 flex flex-col gap-3 glass-hover" style={{ borderTop: '2px solid #fbbf2450' }}>
